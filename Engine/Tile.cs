@@ -1,12 +1,19 @@
-﻿namespace Engine
+﻿using System.Windows.Forms;
+
+namespace Engine
 {
     public class Tile: Coordinate
     {
+        public enum TileValue { empty, X, O };
+
         public int ID { get; set; }
-        public enum Value { empty, X, O };
-        public Tile(int id, int X, int Y, Value value) : base(X, Y)
+        public TileValue Value { get; set; }
+        public Panel Panel { get; set; }
+        public Tile(int id, int X, int Y, TileValue value, Panel panel) : base(X, Y)
         {
             ID = id;
+            Value = value;
+            Panel = panel;
         }
     }
 }

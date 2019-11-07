@@ -9,6 +9,9 @@ namespace Engine
     public class Player: User
     {
         private int _experiencePoints;
+        private string _name;
+        
+        public Tile.TileValue PlayerTile { get; set; }
 
         public event EventHandler<MessageEventArgs> OnMessage;
         
@@ -22,20 +25,36 @@ namespace Engine
                 OnPropertyChanged("Level");
             }
         }
+        public string PlayerName
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged("PlayerName");
+                OnPropertyChanged("Name");
+            }
+        }
 
         public int Level
         {
             get { return ((ExperiencePoints / 100) + 1); }
         }
+        public string Name
+        {
+            get { return PlayerName; }
+        }
+      
         
-        private Player(int experiencePoints)
+        private Player(int experiencePoints, string name)
         {
             ExperiencePoints = experiencePoints;
+            PlayerName = name;
         }
 
         public static Player CreateDefaultPlayer()
         {
-            Player player = new Player(0);
+            Player player = new Player(0, "default");
             return player;
         }
 
@@ -48,8 +67,9 @@ namespace Engine
                 playerData.LoadXml(xmlPlayerData);
 
                 int experiencePoints = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/ExperiencePoints").InnerText);
+                string name = playerData.SelectSingleNode("/Player/Stats/PlayerName").InnerText;
 
-                Player player = new Player(experiencePoints);
+                Player player = new Player(experiencePoints, name);
 
                 return player;
             }
@@ -59,29 +79,7 @@ namespace Engine
                 return CreateDefaultPlayer();
             }
         }
-
-        public static Player CreatePlayerFromDatabase(int experiencePoints)
-        {
-            Player player = new Player(experiencePoints);
-
-            return player;
-        }
-
-       
-
-        private void LootTheCurrentMonster()
-        {
-            RaiseMessage("");
-            RaiseMessage("You defeated " + "CurrentMonster.Name");
-            RaiseMessage("You receive " + "CurrentMonster.RewardExperiencePoints" + " experience points");
-
-            // AddExperiencePoints(CurrentMonster.RewardExperiencePoints);
-
-            RaiseMessage("");
-        }
-
-     
-
+        
         public string ToXmlString()
         {
             XmlDocument playerData = new XmlDocument();
@@ -96,7 +94,8 @@ namespace Engine
 
             // Create the child nodes for the "Stats" node
             CreateNewChildXmlNode(playerData, stats, "ExperiencePoints", ExperiencePoints);
-            
+            CreateNewChildXmlNode(playerData, stats, "PlayerName", PlayerName);
+
 
             return playerData.InnerXml; // The XML document, as a string, so we can save the data to disk
         }
