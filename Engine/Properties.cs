@@ -26,7 +26,7 @@ namespace Engine
             attribute.Value = value.ToString();
             node.Attributes.Append(attribute);
         }
-        public string ToXmlString(string Player1, string Player2, string Winner, Tile[,]Gameboard)
+        public string ToXmlString(string Winner, string Loser, Tile[,]Gameboard)
         {
             XmlDocument GameData = new XmlDocument();
 
@@ -39,9 +39,8 @@ namespace Engine
             Game.AppendChild(stats);
 
             // Create the child nodes for the "Stats" node
-            CreateNewChildXmlNode(GameData, stats, "Player1", Player1);
-            CreateNewChildXmlNode(GameData, stats, "Player2", Player2);
             CreateNewChildXmlNode(GameData, stats, "Winner", Winner);
+            CreateNewChildXmlNode(GameData, stats, "Loser", Loser);
 
             // Create the "GameBoard" child node to hold each Tile node
             XmlNode GameBoard = GameData.CreateElement("GameBoard");
@@ -62,6 +61,20 @@ namespace Engine
 
             return GameData.InnerXml;
         }
-    }
+        public string ToCSVString(string Winner, string Loser, Tile[,] Gameboard)
+        {
+            string MainData = "";
+            string boardData = "[";
+            foreach (Tile tile in Gameboard)
+            {
+                boardData += "[" + tile.ID + "," + tile.X + "," + tile.Y + "," + tile.Value + "],";
+            }
+            boardData.Remove(boardData.Length - 1, 1);
+            boardData += "]";
 
+            int GameID = 0;
+            MainData += GameID + "," + Winner + "," + Loser + "," + boardData + Environment.NewLine;
+            return MainData;
+        }
+    }
 }

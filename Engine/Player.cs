@@ -1,20 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 
 namespace Engine
 {
-    public class Player: User
+    public class Player: INotifyPropertyChanged
     {
+        private Params props = new Params();
         private int _experiencePoints;
         private string _name;
         
         public Tile.TileValue PlayerTile { get; set; }
 
         public event EventHandler<MessageEventArgs> OnMessage;
-        
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+            }
+        }
         public int ExperiencePoints
         {
             get { return _experiencePoints; }
@@ -119,7 +130,23 @@ namespace Engine
             attribute.Value = value.ToString();
             node.Attributes.Append(attribute);
         }
-        
+        public void SaveGame(Player Winner, Player Loser, Tile[,] Gameboard)
+        {
+            //File.AppendAllText("GameData.xml", props.ToXmlString(Winner.Name, Loser.Name, Gameboard));
+
+            string savedata = props.ToCSVString(Winner.Name, Loser.Name, Gameboard);
+            //File.AppendAllText("GameData.csv", props.ToCSVString(Winner.Name, Loser.Name, Gameboard));
+
+            if (!File.Exists("GameData.csv"))
+            {
+                string clientHeader = "GameID,Winner,Loser,Tiles" + Environment.NewLine;
+
+                File.WriteAllText("GameData.csv", clientHeader);
+            }
+
+            File.AppendAllText("GameData.csv", savedata);
+        }
+
         private void RaiseMessage(string message, bool addExtraNewLine = false)
         {
             if (OnMessage != null)

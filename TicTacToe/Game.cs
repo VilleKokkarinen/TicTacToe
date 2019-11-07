@@ -17,12 +17,9 @@ namespace TicTacToe
     {
         private Player[] Players = { Player.CreateDefaultPlayer(), Player.CreateDefaultPlayer() };
         private int PlayerTurn = 0;
+        private Drawing drawing = new Drawing();
 
         private int moveCount;
-        private readonly int _LineWidth = new Params().LineWidth;
-        private readonly int _Margin = new Params().Margin;
-        private readonly int _Size = new Params().Size;
-        private Params props = new Params();
         Tile[,] Gameboard = GameBoard.ReturnBoard();
         
         private void Pnl_Click(object sender, EventArgs e)
@@ -32,17 +29,17 @@ namespace TicTacToe
             int y = pnl.Location.Y / 50;
 
             Tile t = Gameboard[x, y];
-            if (CheckTileState(t))
+            if (t.CheckTileState())
             {
                 SetBoardState(x, y, Players[PlayerTurn].PlayerTile);
                 if (PlayerTurn == 0)
                 {
-                    DrawCross((Panel)sender);
+                    drawing.DrawCross((Panel)sender);
                     PlayerTurn = 1;
                 }
                 else
                 {
-                    DrawCircle((Panel)sender);
+                    drawing.DrawCircle((Panel)sender);
                     PlayerTurn = 0;
                 }                
             }
@@ -88,32 +85,6 @@ namespace TicTacToe
             }
         }
 
-        public void DrawCircle(Panel panel)
-        {
-            int x, y, width, height;
-            // marginin verran vasemmasta ylänurkasta
-            x = _Margin;
-            y = _Margin;
-            // Ympyrän koosta vähennetään 2 marginin verran. (1 alanurkasta, + 1 koosta)
-            width = _Size - _Margin * 2;
-            height = _Size - _Margin * 2;
-
-            Graphics g = panel.CreateGraphics();
-            Pen _pen = new Pen(Color.Black, _LineWidth);
-
-            g.DrawEllipse(_pen, x, y, width, height);
-        }
-        public void DrawCross(Panel panel)
-        {
-            Graphics g = panel.CreateGraphics();
-            Pen _pen = new Pen(Color.Black, _LineWidth);
-            // viiva \
-            g.DrawLine(_pen, new Point(_Margin, _Margin), new Point(_Size - _Margin, _Size - _Margin));
-            // viiva /
-            g.DrawLine(_pen, new Point(_Margin, _Size - _Margin), new Point(_Size - _Margin, _Margin));
-
-        }
-
         public Game()
         {
             InitializeComponent();
@@ -121,6 +92,7 @@ namespace TicTacToe
             Players[0].PlayerTile = Tile.TileValue.X;
             Players[1].PlayerTile = Tile.TileValue.O;
         }
+
         public void SetBoardState(int x, int y, Tile.TileValue value)
         {
             bool Winner = false;
@@ -142,13 +114,10 @@ namespace TicTacToe
                     MessageBox.Show("winner: " + Enum.GetName(typeof(Tile.TileValue), value));
                     Winner = true;
 
-                    Player winningPlayer;
                     if (value == Tile.TileValue.X)
-                        winningPlayer = Players[0];
+                        Players[0].SaveGame(Players[0], Players[1], Gameboard);
                     else
-                        winningPlayer = Players[1];
-
-                    SaveGame(Players[0], Players[1], winningPlayer, Gameboard);
+                        Players[0].SaveGame(Players[1], Players[0], Gameboard);
                 }
             }
             //check row
@@ -161,13 +130,10 @@ namespace TicTacToe
                     MessageBox.Show("winner: " + Enum.GetName(typeof(Tile.TileValue), value));
                     Winner = true;
 
-                    Player winningPlayer;
                     if (value == Tile.TileValue.X)
-                        winningPlayer = Players[0];
+                        Players[0].SaveGame(Players[0], Players[1], Gameboard);
                     else
-                        winningPlayer = Players[1];
-
-                    SaveGame(Players[0], Players[1], winningPlayer, Gameboard);
+                        Players[0].SaveGame(Players[1], Players[0], Gameboard);
                 }
             }
 
@@ -183,13 +149,10 @@ namespace TicTacToe
                         MessageBox.Show("winner: " + Enum.GetName(typeof(Tile.TileValue), value));
                         Winner = true;
 
-                        Player winningPlayer;
                         if (value == Tile.TileValue.X)
-                            winningPlayer = Players[0];
+                            Players[0].SaveGame(Players[0], Players[1], Gameboard);
                         else
-                            winningPlayer = Players[1];
-
-                        SaveGame(Players[0], Players[1], winningPlayer, Gameboard);
+                            Players[0].SaveGame(Players[1], Players[0], Gameboard);
                     }
                 }
             }
@@ -206,13 +169,10 @@ namespace TicTacToe
                         MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
                         Winner = true;
 
-                        Player winningPlayer;
                         if (value == Tile.TileValue.X)
-                            winningPlayer = Players[0];
+                            Players[0].SaveGame(Players[0], Players[1], Gameboard);
                         else
-                            winningPlayer = Players[1];
-
-                        SaveGame(Players[0], Players[1], winningPlayer, Gameboard);
+                            Players[0].SaveGame(Players[1], Players[0], Gameboard);
                     }
                 }
             }
@@ -222,18 +182,6 @@ namespace TicTacToe
             {
                 MessageBox.Show("Draw, no winner");
             }
-        }
-
-        private void SaveGame(Player player1, Player player2, Player Winner, Tile[,]Gameboard)
-        {
-            File.WriteAllText("GameData.xml", props.ToXmlString(player1.Name,player2.Name,Winner.Name,Gameboard));
-        }
-        private bool CheckTileState(Tile t)
-        {
-            if (t.Value == Tile.TileValue.empty)
-                return true;
-            else
-                return false;
-        }
+        }        
     }
 }

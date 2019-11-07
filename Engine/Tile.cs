@@ -15,5 +15,12 @@ namespace Engine
             Value = value;
             Panel = panel;
         }
+        public bool CheckTileState()
+        {
+            if (Value == TileValue.empty)
+                return true;
+            else
+                return false;
+        }
     }
 }
