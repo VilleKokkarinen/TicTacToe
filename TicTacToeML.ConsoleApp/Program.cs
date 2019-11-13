@@ -11,10 +11,11 @@ namespace TicTacToeML.ConsoleApp
     class Program
     {
         //Dataset to use for predictions 
-        private const string DATA_FILEPATH = @"C:\Users\ville\source\repos\TicTacToe\GameData.csv";
+        private const string DATA_FILEPATH = @"C:\GameData2.csv";
 
         static void Main(string[] args)
         {
+            // ModelBuilder.CreateModel();
             // Create single instance of sample data from first line of dataset for model input
             ModelInput sampleData = CreateSingleDataSample(DATA_FILEPATH);
 
@@ -22,15 +23,9 @@ namespace TicTacToeML.ConsoleApp
             ModelOutput predictionResult = ConsumeModel.Predict(sampleData);
 
             Console.WriteLine("Using model to make single prediction -- Comparing actual Winner with predicted Winner from sample data...\n\n");
-            Console.WriteLine($"tile1: {sampleData.Tile1}");
-            Console.WriteLine($"tile2: {sampleData.Tile2}");
-            Console.WriteLine($"tile3: {sampleData.Tile3}");
-            Console.WriteLine($"tile4: {sampleData.Tile4}");
-            Console.WriteLine($"tile5: {sampleData.Tile5}");
-            Console.WriteLine($"tile6: {sampleData.Tile6}");
-            Console.WriteLine($"tile7: {sampleData.Tile7}");
-            Console.WriteLine($"tile8: {sampleData.Tile8}");
-            Console.WriteLine($"tile9: {sampleData.Tile9}");
+            Console.WriteLine($"{sampleData.Tile1} {sampleData.Tile2} {sampleData.Tile3} ");
+            Console.WriteLine($"{sampleData.Tile4} {sampleData.Tile5} {sampleData.Tile6} ");
+            Console.WriteLine($"{sampleData.Tile7} {sampleData.Tile8} {sampleData.Tile9} ");
             Console.WriteLine($"\n\nActual Winner: {sampleData.Winner} \nPredicted Winner value {predictionResult.Prediction} \nPredicted Winner scores: [{String.Join(",", predictionResult.Score)}]\n\n");
             Console.WriteLine("=============== End of process, hit any key to finish ===============");
             Console.ReadKey();

@@ -38,13 +38,13 @@ namespace TicTacToe
             Tile randomTile = legalMoves[r.Next(legalMoves.Count - 1)];
                 if (PlayerTurn == 0)
                 {
-                    drawing.DrawCross(randomTile.Panel);
+                    //drawing.DrawCross(randomTile.Panel);
                     SetBoardState(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
                     PlayerTurn = 1;
                 }
                 else
                 {
-                    drawing.DrawCircle(randomTile.Panel);
+                    //drawing.DrawCircle(randomTile.Panel);
                     SetBoardState(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
                     PlayerTurn = 0;
                 }
@@ -65,13 +65,13 @@ namespace TicTacToe
             {
                 if (PlayerTurn == 0)
                 {
-                    drawing.DrawCross(panel);
+                    //drawing.DrawCross(panel);
                     SetBoardState(x, y, Players[PlayerTurn].PlayerTile);
                     PlayerTurn = 1;
                 }
                 else
                 {            
-                    drawing.DrawCircle(panel);
+                    //drawing.DrawCircle(panel);
                     SetBoardState(x, y, Players[PlayerTurn].PlayerTile);
                     PlayerTurn = 0;
                 }
@@ -218,11 +218,15 @@ namespace TicTacToe
                // MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
                 ResetGame();
             }
+            else
+            {
+                Players[0].SaveGame("-", Gameboard);
+            }
         }
 
         private void btnAIMove_Click(object sender, EventArgs e)
         {
-            for(int i = 0; i < 25000; i ++)
+            while(true)
             AI_MOVE();
         }
     }

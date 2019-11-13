@@ -12,7 +12,7 @@ namespace TicTacToeML.ConsoleApp
 {
     public static class ModelBuilder
     {
-        private static string TRAIN_DATA_FILEPATH = @"C:\Users\ville\source\repos\TicTacToe\GameData.csv";
+        private static string TRAIN_DATA_FILEPATH = @"C:\GameData.csv";
         private static string MODEL_FILEPATH = @"../../../../TicTacToeML.Model/MLModel.zip";
 
         // Create MLContext to be shared across the model creation workflow objects 
