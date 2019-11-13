@@ -30,6 +30,7 @@
         {
             this.lblPlayerName = new System.Windows.Forms.Label();
             this.txtPlayerName = new System.Windows.Forms.TextBox();
+            this.btnAIMove = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblPlayerName
@@ -48,11 +49,22 @@
             this.txtPlayerName.Size = new System.Drawing.Size(100, 20);
             this.txtPlayerName.TabIndex = 2;
             // 
+            // btnAIMove
+            // 
+            this.btnAIMove.Location = new System.Drawing.Point(271, 72);
+            this.btnAIMove.Name = "btnAIMove";
+            this.btnAIMove.Size = new System.Drawing.Size(75, 23);
+            this.btnAIMove.TabIndex = 3;
+            this.btnAIMove.Text = "Make AI Move";
+            this.btnAIMove.UseVisualStyleBackColor = true;
+            this.btnAIMove.Click += new System.EventHandler(this.btnAIMove_Click);
+            // 
             // Game
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(447, 320);
+            this.Controls.Add(this.btnAIMove);
             this.Controls.Add(this.txtPlayerName);
             this.Controls.Add(this.lblPlayerName);
             this.Name = "Game";
@@ -65,5 +77,6 @@
         #endregion
         private System.Windows.Forms.Label lblPlayerName;
         private System.Windows.Forms.TextBox txtPlayerName;
+        private System.Windows.Forms.Button btnAIMove;
     }
 }

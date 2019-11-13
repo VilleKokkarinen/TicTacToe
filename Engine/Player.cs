@@ -130,16 +130,16 @@ namespace Engine
             attribute.Value = value.ToString();
             node.Attributes.Append(attribute);
         }
-        public void SaveGame(Player Winner, Player Loser, Tile[,] Gameboard)
+        public void SaveGame(string Winner, Tile[,] Gameboard)
         {
             //File.AppendAllText("GameData.xml", props.ToXmlString(Winner.Name, Loser.Name, Gameboard));
 
-            string savedata = props.ToCSVString(Winner.Name, Loser.Name, Gameboard);
+            string savedata = props.ToCSVString(Winner, Gameboard);
             //File.AppendAllText("GameData.csv", props.ToCSVString(Winner.Name, Loser.Name, Gameboard));
 
             if (!File.Exists("GameData.csv"))
             {
-                string clientHeader = "GameID,Winner,Loser,Tiles" + Environment.NewLine;
+                string clientHeader = "Winner,tile1,tile2,tile3,tile4,tile5,tile6,tile7,tile8,tile9" + Environment.NewLine;
 
                 File.WriteAllText("GameData.csv", clientHeader);
             }

@@ -61,19 +61,17 @@ namespace Engine
 
             return GameData.InnerXml;
         }
-        public string ToCSVString(string Winner, string Loser, Tile[,] Gameboard)
+        public string ToCSVString(string Winner, Tile[,] Gameboard)
         {
             string MainData = "";
-            string boardData = "[";
+            string boardData = "";
             foreach (Tile tile in Gameboard)
             {
-                boardData += "[" + tile.ID + "," + tile.X + "," + tile.Y + "," + tile.Value + "],";
+                boardData += ","+tile.Value ;
             }
             boardData.Remove(boardData.Length - 1, 1);
-            boardData += "]";
 
-            int GameID = 0;
-            MainData += GameID + "," + Winner + "," + Loser + "," + boardData + Environment.NewLine;
+            MainData += Winner + boardData + Environment.NewLine;
             return MainData;
         }
     }

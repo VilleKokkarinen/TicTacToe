@@ -22,29 +22,74 @@ namespace TicTacToe
         private int moveCount;
         Tile[,] Gameboard = GameBoard.ReturnBoard();
         
-        private void Pnl_Click(object sender, EventArgs e)
+      
+        private void AI_MOVE()
         {
-            Panel pnl = (Panel)sender;
-            int x = pnl.Location.X / 50;
-            int y = pnl.Location.Y / 50;
+            Random r = new Random();
+            List<Tile> legalMoves = new List<Tile>();
+               foreach(Tile tile in Gameboard)
+               {
+                    if (tile.Value == Tile.TileValue.empty)
+                    {
+                        legalMoves.Add(tile);
+                    }
+               }
 
-            Tile t = Gameboard[x, y];
-            if (t.CheckTileState())
-            {
-                SetBoardState(x, y, Players[PlayerTurn].PlayerTile);
+            Tile randomTile = legalMoves[r.Next(legalMoves.Count - 1)];
                 if (PlayerTurn == 0)
                 {
-                    drawing.DrawCross((Panel)sender);
+                    drawing.DrawCross(randomTile.Panel);
+                    SetBoardState(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
                     PlayerTurn = 1;
                 }
                 else
                 {
-                    drawing.DrawCircle((Panel)sender);
+                    drawing.DrawCircle(randomTile.Panel);
+                    SetBoardState(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
                     PlayerTurn = 0;
-                }                
+                }
+        }
+
+        private void Pnl_Click(object sender, EventArgs e)
+        {
+            Logic((Panel)sender);
+        }
+
+        public void Logic(Panel panel)
+        {
+            int x = panel.Location.X / 50;
+            int y = panel.Location.Y / 50;
+
+            Tile t = Gameboard[x, y];
+            if (t.CheckTileState())
+            {
+                if (PlayerTurn == 0)
+                {
+                    drawing.DrawCross(panel);
+                    SetBoardState(x, y, Players[PlayerTurn].PlayerTile);
+                    PlayerTurn = 1;
+                }
+                else
+                {            
+                    drawing.DrawCircle(panel);
+                    SetBoardState(x, y, Players[PlayerTurn].PlayerTile);
+                    PlayerTurn = 0;
+                }
             }
         }
 
+        public void ResetGame()
+        {
+            Gameboard = GameBoard.ReturnBoard();
+            moveCount = 0;
+            PlayerTurn = 0;
+           
+            foreach (Tile tile in Gameboard)
+            {
+                tile.Value = Tile.TileValue.empty;
+            }
+            Refresh();
+        }
         public void AddPanels()
         {
             Point newLoc = new Point(25, 25);
@@ -92,7 +137,10 @@ namespace TicTacToe
             Players[0].PlayerTile = Tile.TileValue.X;
             Players[1].PlayerTile = Tile.TileValue.O;
         }
+        public void ShowWinner(string Winner)
+        {
 
+        }
         public void SetBoardState(int x, int y, Tile.TileValue value)
         {
             bool Winner = false;
@@ -111,13 +159,7 @@ namespace TicTacToe
                     break;
                 if (i == n - 1)
                 {
-                    MessageBox.Show("winner: " + Enum.GetName(typeof(Tile.TileValue), value));
                     Winner = true;
-
-                    if (value == Tile.TileValue.X)
-                        Players[0].SaveGame(Players[0], Players[1], Gameboard);
-                    else
-                        Players[0].SaveGame(Players[1], Players[0], Gameboard);
                 }
             }
             //check row
@@ -127,13 +169,7 @@ namespace TicTacToe
                     break;
                 if (i == n - 1)
                 {
-                    MessageBox.Show("winner: " + Enum.GetName(typeof(Tile.TileValue), value));
                     Winner = true;
-
-                    if (value == Tile.TileValue.X)
-                        Players[0].SaveGame(Players[0], Players[1], Gameboard);
-                    else
-                        Players[0].SaveGame(Players[1], Players[0], Gameboard);
                 }
             }
 
@@ -146,13 +182,7 @@ namespace TicTacToe
                         break;
                     if (i == n - 1)
                     {
-                        MessageBox.Show("winner: " + Enum.GetName(typeof(Tile.TileValue), value));
                         Winner = true;
-
-                        if (value == Tile.TileValue.X)
-                            Players[0].SaveGame(Players[0], Players[1], Gameboard);
-                        else
-                            Players[0].SaveGame(Players[1], Players[0], Gameboard);
                     }
                 }
             }
@@ -165,14 +195,8 @@ namespace TicTacToe
                     if (Gameboard[i,(n - 1) - i].Value != value)
                         break;
                     if (i == n - 1)
-                    {
-                        MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
+                    {                        
                         Winner = true;
-
-                        if (value == Tile.TileValue.X)
-                            Players[0].SaveGame(Players[0], Players[1], Gameboard);
-                        else
-                            Players[0].SaveGame(Players[1], Players[0], Gameboard);
                     }
                 }
             }
@@ -180,8 +204,26 @@ namespace TicTacToe
             //check draw
             if (moveCount == (Math.Pow(n, 2)) && Winner != true)
             {
-                MessageBox.Show("Draw, no winner");
+                // MessageBox.Show("Draw, no winner");
+                Players[0].SaveGame("-", Gameboard);
+                ResetGame();
             }
-        }        
+            if(Winner == true)
+            {
+                if (value == Tile.TileValue.X)
+                    Players[0].SaveGame("X", Gameboard);
+                else
+                    Players[0].SaveGame("O", Gameboard);
+
+               // MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
+                ResetGame();
+            }
+        }
+
+        private void btnAIMove_Click(object sender, EventArgs e)
+        {
+            for(int i = 0; i < 25000; i ++)
+            AI_MOVE();
+        }
     }
 }

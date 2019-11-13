@@ -5,7 +5,6 @@ namespace Engine
     public class Tile: Coordinate
     {
         public enum TileValue { empty, X, O };
-
         public int ID { get; set; }
         public TileValue Value { get; set; }
         public Panel Panel { get; set; }
@@ -21,6 +20,10 @@ namespace Engine
                 return true;
             else
                 return false;
+        }
+        public void refresh()
+        {
+            Panel.Refresh();
         }
     }
 }
