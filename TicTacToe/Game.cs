@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using Engine;
+using TicTacToeML.Model;
 
 namespace TicTacToe
 {
@@ -22,62 +23,70 @@ namespace TicTacToe
         private int moveCount;
         Tile[,] Gameboard = GameBoard.ReturnBoard();
         
+        private void MakeMove(Panel p, int X, int Y, Tile.TileValue value)
+        {
+            if (PlayerTurn == 0)
+            {
+                drawing.DrawCross(p);
+                SetBoardState(X, Y, value);
+                PlayerTurn = 1;
+            }
+            else
+            {
+                drawing.DrawCircle(p);
+                SetBoardState(X, Y, value);
+                PlayerTurn = 0;
+            }
+        }
       
+        private string predictwinner()
+        {            
+            // Add input data
+            var input = new ModelInput();
+
+            input.VerticalFirst = Gameboard[0, 0].Value.ToString() + Gameboard[0, 1].Value.ToString() + Gameboard[0, 2].Value.ToString();
+            input.VerticalSecond = Gameboard[1, 0].Value.ToString() + Gameboard[1, 1].Value.ToString() + Gameboard[1, 2].Value.ToString();
+            input.VerticalThird = Gameboard[2, 0].Value.ToString() + Gameboard[2, 1].Value.ToString() + Gameboard[2, 2].Value.ToString();
+            input.HorizontalFirst = Gameboard[0, 0].Value.ToString() + Gameboard[1, 0].Value.ToString() + Gameboard[2, 0].Value.ToString();
+            input.HorizntalSecond = Gameboard[0, 1].Value.ToString() + Gameboard[1, 1].Value.ToString() + Gameboard[2, 1].Value.ToString();
+            input.HorizontalThird = Gameboard[0, 2].Value.ToString() + Gameboard[1, 2].Value.ToString() + Gameboard[2, 2].Value.ToString();
+            input.DiagonalFirst = Gameboard[0, 0].Value.ToString() + Gameboard[1, 1].Value.ToString() + Gameboard[2, 2].Value.ToString();
+            input.DiagonalSecond = Gameboard[0, 2].Value.ToString() + Gameboard[1, 1].Value.ToString() + Gameboard[2, 0].Value.ToString();
+
+            // Load model and predict output of sample data
+            ModelOutput result = ConsumeModel.Predict(input);
+            return result.Prediction;
+        }
         private void AI_MOVE()
         {
             Random r = new Random();
             List<Tile> legalMoves = new List<Tile>();
                foreach(Tile tile in Gameboard)
                {
-                    if (tile.Value == Tile.TileValue.empty)
+                    if (tile.Value == Tile.TileValue.E)
                     {
                         legalMoves.Add(tile);
                     }
                }
 
             Tile randomTile = legalMoves[r.Next(legalMoves.Count - 1)];
-                if (PlayerTurn == 0)
-                {
-                    //drawing.DrawCross(randomTile.Panel);
-                    SetBoardState(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
-                    PlayerTurn = 1;
-                }
-                else
-                {
-                    //drawing.DrawCircle(randomTile.Panel);
-                    SetBoardState(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
-                    PlayerTurn = 0;
-                }
+
+            MakeMove(randomTile.Panel, randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
         }
 
         private void Pnl_Click(object sender, EventArgs e)
         {
-            Logic((Panel)sender);
-        }
+            Panel panel = (Panel)sender;
 
-        public void Logic(Panel panel)
-        {
             int x = panel.Location.X / 50;
             int y = panel.Location.Y / 50;
 
             Tile t = Gameboard[x, y];
             if (t.CheckTileState())
             {
-                if (PlayerTurn == 0)
-                {
-                    //drawing.DrawCross(panel);
-                    SetBoardState(x, y, Players[PlayerTurn].PlayerTile);
-                    PlayerTurn = 1;
-                }
-                else
-                {            
-                    //drawing.DrawCircle(panel);
-                    SetBoardState(x, y, Players[PlayerTurn].PlayerTile);
-                    PlayerTurn = 0;
-                }
+                MakeMove(panel, x, y, Players[PlayerTurn].PlayerTile);
             }
         }
-
         public void ResetGame()
         {
             Gameboard = GameBoard.ReturnBoard();
@@ -86,7 +95,7 @@ namespace TicTacToe
            
             foreach (Tile tile in Gameboard)
             {
-                tile.Value = Tile.TileValue.empty;
+                tile.Value = Tile.TileValue.E;
             }
             Refresh();
         }
@@ -137,21 +146,48 @@ namespace TicTacToe
             Players[0].PlayerTile = Tile.TileValue.X;
             Players[1].PlayerTile = Tile.TileValue.O;
         }
-        public void ShowWinner(string Winner)
+        public void checkwinnerAI()
         {
-
+            if (moveCount >= 5)
+            {
+                string prediction = predictwinner();
+                if (prediction != "E")
+                {
+                    if (prediction == "X")
+                    {
+                        MessageBox.Show("X Wins");
+                        Players[0].SaveGame("X", Gameboard);
+                        ResetGame();
+                    }
+                    else if (prediction == "O")
+                    {
+                        MessageBox.Show("O Wins");
+                        Players[0].SaveGame("O", Gameboard);
+                        ResetGame();
+                    }
+                    else if (prediction == "DRAW" && moveCount == 9)
+                    {
+                        MessageBox.Show("Draw, no winner");
+                        Players[0].SaveGame("D", Gameboard);
+                        ResetGame();
+                    }
+                }
+            }
         }
         public void SetBoardState(int x, int y, Tile.TileValue value)
         {
             bool Winner = false;
-            moveCount++;
             int n = 3;
-            if(Gameboard[x,y].Value == Tile.TileValue.empty)
+            moveCount++;
+
+            if (Gameboard[x, y].Value == Tile.TileValue.E)
             {
                 Gameboard[x, y].Value = value;
             }
             //Game Win-conditions
 
+            checkwinnerAI();
+            
             //check column
             for (int i = 0; i < n; i++)
             {
@@ -200,12 +236,12 @@ namespace TicTacToe
                     }
                 }
             }
-
+            
             //check draw
             if (moveCount == (Math.Pow(n, 2)) && Winner != true)
             {
                 // MessageBox.Show("Draw, no winner");
-                Players[0].SaveGame("-", Gameboard);
+                Players[0].SaveGame("DRAW", Gameboard);
                 ResetGame();
             }
             if(Winner == true)
@@ -215,19 +251,22 @@ namespace TicTacToe
                 else
                     Players[0].SaveGame("O", Gameboard);
 
-               // MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
+                // MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
                 ResetGame();
             }
             else
             {
-                Players[0].SaveGame("-", Gameboard);
+                if(moveCount >= 5)
+                Players[0].SaveGame("E", Gameboard);
             }
+            
+            
         }
 
         private void btnAIMove_Click(object sender, EventArgs e)
         {
-            while(true)
-            AI_MOVE();
+            //for(int i = 0; i < 1000000; i ++)
+                AI_MOVE();
         }
     }
 }
