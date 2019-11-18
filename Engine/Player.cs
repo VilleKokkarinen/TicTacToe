@@ -146,6 +146,19 @@ namespace Engine
 
             File.AppendAllText("GameData.csv", savedata);
         }
+        public void SaveMove(string Player, int TileID, Tile[,] Gameboard)
+        {
+            string savedata = props.MoveToCSVString(Player, TileID, Gameboard);
+
+            if (!File.Exists("MoveData.csv"))
+            {
+                string clientHeader = "TilePlayed,TileID,tile1,tile2,tile3,tile4,tile5,tile6,tile7,tile8,tile9" + Environment.NewLine;
+
+                File.WriteAllText("MoveData.csv", clientHeader);
+            }
+
+            File.AppendAllText("MoveData.csv", savedata);
+        }
 
         private void RaiseMessage(string message, bool addExtraNewLine = false)
         {

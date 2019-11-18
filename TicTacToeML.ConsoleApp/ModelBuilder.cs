@@ -12,7 +12,7 @@ namespace TicTacToeML.ConsoleApp
 {
     public static class ModelBuilder
     {
-        private static string TRAIN_DATA_FILEPATH = @"C:\GameData.csv";
+        private static string TRAIN_DATA_FILEPATH = @"C:\Users\ville\Source\Repos\VilleKokkarinen\TicTacToe\TicTacToe\bin\x64\Debug\MoveData.csv";
         private static string MODEL_FILEPATH = @"../../../../TicTacToeML.Model/MLModel.zip";
 
         // Create MLContext to be shared across the model creation workflow objects 
@@ -45,12 +45,13 @@ namespace TicTacToeML.ConsoleApp
         public static IEstimator<ITransformer> BuildTrainingPipeline(MLContext mlContext)
         {
             // Data process configuration with pipeline data transformations 
-            var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey("Winner", "Winner")
-                                      .Append(mlContext.Transforms.Categorical.OneHotEncoding(new[] { new InputOutputColumnPair("tile1", "tile1"), new InputOutputColumnPair("tile2", "tile2"), new InputOutputColumnPair("tile3", "tile3"), new InputOutputColumnPair("tile4", "tile4"), new InputOutputColumnPair("tile5", "tile5"), new InputOutputColumnPair("tile6", "tile6"), new InputOutputColumnPair("tile7", "tile7"), new InputOutputColumnPair("tile8", "tile8"), new InputOutputColumnPair("tile9", "tile9") }))
-                                      .Append(mlContext.Transforms.Concatenate("Features", new[] { "tile1", "tile2", "tile3", "tile4", "tile5", "tile6", "tile7", "tile8", "tile9" }));
+            var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey("TileID", "TileID")
+                                      .Append(mlContext.Transforms.Categorical.OneHotEncoding(new[] { new InputOutputColumnPair("TilePlayed", "TilePlayed"), new InputOutputColumnPair("tile1", "tile1"), new InputOutputColumnPair("tile2", "tile2"), new InputOutputColumnPair("tile3", "tile3"), new InputOutputColumnPair("tile4", "tile4"), new InputOutputColumnPair("tile5", "tile5"), new InputOutputColumnPair("tile6", "tile6"), new InputOutputColumnPair("tile7", "tile7"), new InputOutputColumnPair("tile8", "tile8"), new InputOutputColumnPair("tile9", "tile9") }))
+                                      .Append(mlContext.Transforms.Concatenate("Features", new[] { "TilePlayed", "tile1", "tile2", "tile3", "tile4", "tile5", "tile6", "tile7", "tile8", "tile9" }))
+                                      .AppendCacheCheckpoint(mlContext);
 
             // Set the training algorithm 
-            var trainer = mlContext.MulticlassClassification.Trainers.LightGbm(labelColumnName: "Winner", featureColumnName: "Features")
+            var trainer = mlContext.MulticlassClassification.Trainers.OneVersusAll(mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: "TileID", featureColumnName: "Features"), labelColumnName: "TileID")
                                       .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel", "PredictedLabel"));
             var trainingPipeline = dataProcessPipeline.Append(trainer);
 
@@ -72,9 +73,10 @@ namespace TicTacToeML.ConsoleApp
             // Cross-Validate with single dataset (since we don't have two datasets, one for training and for evaluate)
             // in order to evaluate and get the model's accuracy metrics
             Console.WriteLine("=============== Cross-validating to get model's accuracy metrics ===============");
-            var crossValidationResults = mlContext.MulticlassClassification.CrossValidate(trainingDataView, trainingPipeline, numberOfFolds: 5, labelColumnName: "Winner");
+            var crossValidationResults = mlContext.MulticlassClassification.CrossValidate(trainingDataView, trainingPipeline, numberOfFolds: 5, labelColumnName: "TileID");
             PrintMulticlassClassificationFoldsAverageMetrics(crossValidationResults);
         }
+
         private static void SaveModel(MLContext mlContext, ITransformer mlModel, string modelRelativePath, DataViewSchema modelInputSchema)
         {
             // Save/persist the trained model to a .ZIP file

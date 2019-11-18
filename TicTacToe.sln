@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.902
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe", "TicTacToe\TicTacToe.csproj", "{0F52FB1E-3882-4192-B75C-78D009DCA5BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{3E2996E1-BA7D-41D6-9A4B-97E756EEA3D1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachineLearning", "MachineLearning\MachineLearning.csproj", "{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacToeML.Model", "TicTacToeML.Model\TicTacToeML.Model.csproj", "{2F5530DE-1852-4420-9ECF-405524779355}"
 EndProject
@@ -47,18 +45,6 @@ Global
 		{3E2996E1-BA7D-41D6-9A4B-97E756EEA3D1}.Release|x64.Build.0 = Release|x64
 		{3E2996E1-BA7D-41D6-9A4B-97E756EEA3D1}.Release|x86.ActiveCfg = Release|x86
 		{3E2996E1-BA7D-41D6-9A4B-97E756EEA3D1}.Release|x86.Build.0 = Release|x86
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Debug|x64.Build.0 = Debug|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Debug|x86.Build.0 = Debug|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Release|x64.ActiveCfg = Release|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Release|x64.Build.0 = Release|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Release|x86.ActiveCfg = Release|Any CPU
-		{4AA8BA7E-7DF9-4467-8695-B58CBD780DD7}.Release|x86.Build.0 = Release|Any CPU
 		{2F5530DE-1852-4420-9ECF-405524779355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F5530DE-1852-4420-9ECF-405524779355}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F5530DE-1852-4420-9ECF-405524779355}.Debug|x64.ActiveCfg = Debug|Any CPU

@@ -74,5 +74,18 @@ namespace Engine
             MainData += Winner + boardData + Environment.NewLine;
             return MainData;
         }
+        public string MoveToCSVString(string TilePlayed, int TileID, Tile[,] Gameboard)
+        {
+            string MainData = "";
+            string boardData = "";
+            foreach (Tile tile in Gameboard)
+            {
+                boardData += "," + tile.Value;
+            }
+            boardData.Remove(boardData.Length - 1, 1);
+
+            MainData += TilePlayed +","+ TileID + boardData + Environment.NewLine;
+            return MainData;
+        }
     }
 }
