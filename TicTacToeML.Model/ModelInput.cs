@@ -46,5 +46,9 @@ namespace TicTacToeML.Model
         public string Tile9 { get; set; }
 
 
+        [ColumnName("OccupiedTiles"), LoadColumn(10)]
+        public float OccupiedTiles { get; set; }
+
+
     }
 }

@@ -7,12 +7,13 @@ using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using TicTacToeML.Model;
+using Microsoft.ML.Trainers.FastTree;
 
 namespace TicTacToeML.ConsoleApp
 {
     public static class ModelBuilder
     {
-        private static string TRAIN_DATA_FILEPATH = @"C:\GameData.csv";
+        private static string TRAIN_DATA_FILEPATH = @"C:\Users\ville\source\repos\TicTacToe\GameData.csv";
         private static string MODEL_FILEPATH = @"../../../../TicTacToeML.Model/MLModel.zip";
 
         // Create MLContext to be shared across the model creation workflow objects 
@@ -47,10 +48,11 @@ namespace TicTacToeML.ConsoleApp
             // Data process configuration with pipeline data transformations 
             var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey("Winner", "Winner")
                                       .Append(mlContext.Transforms.Categorical.OneHotEncoding(new[] { new InputOutputColumnPair("tile1", "tile1"), new InputOutputColumnPair("tile2", "tile2"), new InputOutputColumnPair("tile3", "tile3"), new InputOutputColumnPair("tile4", "tile4"), new InputOutputColumnPair("tile5", "tile5"), new InputOutputColumnPair("tile6", "tile6"), new InputOutputColumnPair("tile7", "tile7"), new InputOutputColumnPair("tile8", "tile8"), new InputOutputColumnPair("tile9", "tile9") }))
-                                      .Append(mlContext.Transforms.Concatenate("Features", new[] { "tile1", "tile2", "tile3", "tile4", "tile5", "tile6", "tile7", "tile8", "tile9" }));
+                                      .Append(mlContext.Transforms.Concatenate("Features", new[] { "tile1", "tile2", "tile3", "tile4", "tile5", "tile6", "tile7", "tile8", "tile9", "OccupiedTiles" }))
+                                      .AppendCacheCheckpoint(mlContext);
 
             // Set the training algorithm 
-            var trainer = mlContext.MulticlassClassification.Trainers.LightGbm(labelColumnName: "Winner", featureColumnName: "Features")
+            var trainer = mlContext.MulticlassClassification.Trainers.OneVersusAll(mlContext.BinaryClassification.Trainers.FastTree(new FastTreeBinaryTrainer.Options() { NumberOfLeaves = 116, MinimumExampleCountPerLeaf = 1, NumberOfTrees = 100, LearningRate = 159942f, Shrinkage = 1.899943E+08f, LabelColumnName = "Winner", FeatureColumnName = "Features" }), labelColumnName: "Winner")
                                       .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel", "PredictedLabel"));
             var trainingPipeline = dataProcessPipeline.Append(trainer);
 
@@ -75,6 +77,7 @@ namespace TicTacToeML.ConsoleApp
             var crossValidationResults = mlContext.MulticlassClassification.CrossValidate(trainingDataView, trainingPipeline, numberOfFolds: 5, labelColumnName: "Winner");
             PrintMulticlassClassificationFoldsAverageMetrics(crossValidationResults);
         }
+
         private static void SaveModel(MLContext mlContext, ITransformer mlModel, string modelRelativePath, DataViewSchema modelInputSchema)
         {
             // Save/persist the trained model to a .ZIP file

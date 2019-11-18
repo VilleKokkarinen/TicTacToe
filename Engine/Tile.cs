@@ -4,7 +4,7 @@ namespace Engine
 {
     public class Tile: Coordinate
     {
-        public enum TileValue { E, X, O };
+        public enum TileValue { NaN, X, O };
         public int ID { get; set; }
         public TileValue Value { get; set; }
         public Panel Panel { get; set; }
@@ -16,7 +16,7 @@ namespace Engine
         }
         public bool CheckTileState()
         {
-            if (Value == TileValue.E)
+            if (Value == TileValue.NaN)
                 return true;
             else
                 return false;

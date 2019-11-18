@@ -43,15 +43,39 @@ namespace TicTacToe
         {            
             // Add input data
             var input = new ModelInput();
+            input.Tile1 = Gameboard[0, 0].Value.ToString();
+            input.Tile2 = Gameboard[1, 0].Value.ToString();
+            input.Tile3 = Gameboard[2, 0].Value.ToString();
+            input.Tile4 = Gameboard[0, 1].Value.ToString();
+            input.Tile5 = Gameboard[1, 1].Value.ToString();
+            input.Tile6 = Gameboard[2, 1].Value.ToString();
+            input.Tile7 = Gameboard[0, 2].Value.ToString();
+            input.Tile8 = Gameboard[1, 2].Value.ToString();
+            input.Tile9 = Gameboard[2, 2].Value.ToString();
 
-            input.VerticalFirst = Gameboard[0, 0].Value.ToString() + Gameboard[0, 1].Value.ToString() + Gameboard[0, 2].Value.ToString();
-            input.VerticalSecond = Gameboard[1, 0].Value.ToString() + Gameboard[1, 1].Value.ToString() + Gameboard[1, 2].Value.ToString();
-            input.VerticalThird = Gameboard[2, 0].Value.ToString() + Gameboard[2, 1].Value.ToString() + Gameboard[2, 2].Value.ToString();
-            input.HorizontalFirst = Gameboard[0, 0].Value.ToString() + Gameboard[1, 0].Value.ToString() + Gameboard[2, 0].Value.ToString();
-            input.HorizntalSecond = Gameboard[0, 1].Value.ToString() + Gameboard[1, 1].Value.ToString() + Gameboard[2, 1].Value.ToString();
-            input.HorizontalThird = Gameboard[0, 2].Value.ToString() + Gameboard[1, 2].Value.ToString() + Gameboard[2, 2].Value.ToString();
-            input.DiagonalFirst = Gameboard[0, 0].Value.ToString() + Gameboard[1, 1].Value.ToString() + Gameboard[2, 2].Value.ToString();
-            input.DiagonalSecond = Gameboard[0, 2].Value.ToString() + Gameboard[1, 1].Value.ToString() + Gameboard[2, 0].Value.ToString();
+            List<string> onboard = new List<string>();
+            List<string> prediction = new List<string>();
+            prediction.Add(input.Tile1);
+            prediction.Add(input.Tile2);
+            prediction.Add(input.Tile3);
+            prediction.Add(input.Tile4);
+            prediction.Add(input.Tile5);
+            prediction.Add(input.Tile6);
+            prediction.Add(input.Tile7);
+            prediction.Add(input.Tile8);
+            prediction.Add(input.Tile9);
+
+            int occupied = 0;
+            foreach (Tile tile in Gameboard)
+            {
+                if (tile.Value != Tile.TileValue.NaN)
+                    occupied++;
+
+                onboard.Add(tile.Value.ToString());
+
+            }
+            input.OccupiedTiles = occupied;
+
 
             // Load model and predict output of sample data
             ModelOutput result = ConsumeModel.Predict(input);
@@ -63,7 +87,7 @@ namespace TicTacToe
             List<Tile> legalMoves = new List<Tile>();
                foreach(Tile tile in Gameboard)
                {
-                    if (tile.Value == Tile.TileValue.E)
+                    if (tile.Value == Tile.TileValue.NaN)
                     {
                         legalMoves.Add(tile);
                     }
@@ -95,7 +119,7 @@ namespace TicTacToe
            
             foreach (Tile tile in Gameboard)
             {
-                tile.Value = Tile.TileValue.E;
+                tile.Value = Tile.TileValue.NaN;
             }
             Refresh();
         }
@@ -156,20 +180,20 @@ namespace TicTacToe
                     if (prediction == "X")
                     {
                         MessageBox.Show("X Wins");
-                        Players[0].SaveGame("X", Gameboard);
-                        ResetGame();
+                        // Players[0].SaveGame("X", Gameboard);
+                        // ResetGame();
                     }
                     else if (prediction == "O")
                     {
                         MessageBox.Show("O Wins");
-                        Players[0].SaveGame("O", Gameboard);
-                        ResetGame();
+                        // Players[0].SaveGame("O", Gameboard);
+                        // ResetGame();
                     }
                     else if (prediction == "DRAW" && moveCount == 9)
                     {
                         MessageBox.Show("Draw, no winner");
-                        Players[0].SaveGame("D", Gameboard);
-                        ResetGame();
+                        // Players[0].SaveGame("D", Gameboard);
+                        // ResetGame();
                     }
                 }
             }
@@ -180,13 +204,13 @@ namespace TicTacToe
             int n = 3;
             moveCount++;
 
-            if (Gameboard[x, y].Value == Tile.TileValue.E)
+            if (Gameboard[x, y].Value == Tile.TileValue.NaN)
             {
                 Gameboard[x, y].Value = value;
             }
             //Game Win-conditions
 
-            checkwinnerAI();
+            //checkwinnerAI();
             
             //check column
             for (int i = 0; i < n; i++)
@@ -240,7 +264,7 @@ namespace TicTacToe
             //check draw
             if (moveCount == (Math.Pow(n, 2)) && Winner != true)
             {
-                // MessageBox.Show("Draw, no winner");
+                MessageBox.Show("Draw, no winner");
                 Players[0].SaveGame("DRAW", Gameboard);
                 ResetGame();
             }
@@ -251,7 +275,7 @@ namespace TicTacToe
                 else
                     Players[0].SaveGame("O", Gameboard);
 
-                // MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
+                MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
                 ResetGame();
             }
             else

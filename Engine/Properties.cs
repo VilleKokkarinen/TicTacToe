@@ -65,13 +65,16 @@ namespace Engine
         {
             string MainData = "";
             string boardData = "";
+            int occupied = 0;
             foreach (Tile tile in Gameboard)
             {
-                boardData += ","+tile.Value ;
+                boardData += "," + tile.Value;
+                if (tile.Value != Tile.TileValue.NaN)
+                    occupied++;
             }
             boardData.Remove(boardData.Length - 1, 1);
 
-            MainData += Winner + boardData + Environment.NewLine;
+            MainData += Winner + boardData + "," + occupied + Environment.NewLine;
             return MainData;
         }
     }

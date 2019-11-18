@@ -139,7 +139,7 @@ namespace Engine
 
             if (!File.Exists("GameData.csv"))
             {
-                string clientHeader = "Winner,tile1,tile2,tile3,tile4,tile5,tile6,tile7,tile8,tile9" + Environment.NewLine;
+                string clientHeader = "Winner,tile1,tile2,tile3,tile4,tile5,tile6,tile7,tile8,tile9,OccupiedTiles" + Environment.NewLine;
 
                 File.WriteAllText("GameData.csv", clientHeader);
             }
