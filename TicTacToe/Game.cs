@@ -39,8 +39,14 @@ namespace TicTacToe
             }
         }
       
-        private string predictwinner()
-        {            
+        private float predictwinner()
+        {
+            string tileplayed = "";
+            if (PlayerTurn == 0)
+                tileplayed = "O";
+            else
+                tileplayed = "X";
+
             // Add input data
             var input = new ModelInput();
             input.Tile1 = Gameboard[0, 0].Value.ToString();
@@ -52,30 +58,7 @@ namespace TicTacToe
             input.Tile7 = Gameboard[0, 2].Value.ToString();
             input.Tile8 = Gameboard[1, 2].Value.ToString();
             input.Tile9 = Gameboard[2, 2].Value.ToString();
-
-            List<string> onboard = new List<string>();
-            List<string> prediction = new List<string>();
-            prediction.Add(input.Tile1);
-            prediction.Add(input.Tile2);
-            prediction.Add(input.Tile3);
-            prediction.Add(input.Tile4);
-            prediction.Add(input.Tile5);
-            prediction.Add(input.Tile6);
-            prediction.Add(input.Tile7);
-            prediction.Add(input.Tile8);
-            prediction.Add(input.Tile9);
-
-            int occupied = 0;
-            foreach (Tile tile in Gameboard)
-            {
-                if (tile.Value != Tile.TileValue.NaN)
-                    occupied++;
-
-                onboard.Add(tile.Value.ToString());
-
-            }
-            input.OccupiedTiles = occupied;
-
+            input.TilePlayed = tileplayed;
 
             // Load model and predict output of sample data
             ModelOutput result = ConsumeModel.Predict(input);
@@ -87,7 +70,7 @@ namespace TicTacToe
             List<Tile> legalMoves = new List<Tile>();
                foreach(Tile tile in Gameboard)
                {
-                    if (tile.Value == Tile.TileValue.NaN)
+                    if (tile.Value == Tile.TileValue.E)
                     {
                         legalMoves.Add(tile);
                     }
@@ -119,7 +102,7 @@ namespace TicTacToe
            
             foreach (Tile tile in Gameboard)
             {
-                tile.Value = Tile.TileValue.NaN;
+                tile.Value = Tile.TileValue.E;
             }
             Refresh();
         }
@@ -128,11 +111,11 @@ namespace TicTacToe
             Point newLoc = new Point(25, 25);
             int offset = 25 + 50 + 1;
 
-            for (int i = 0; i < Gameboard.GetLength(0); i++)
+            for (int x = 0; x < Gameboard.GetLength(0); x++)
             {
-                for(int j = 0; j < Gameboard.GetLength(1); j++)
+                for(int y = 0; y < Gameboard.GetLength(1); y++)
                 {
-                    Panel p = Gameboard[i, j].Panel;
+                    Panel p = Gameboard[x, y].Panel;
                     p.Size = new Size(50, 50);
                     p.Location = newLoc;
                     p.Click += Pnl_Click;
@@ -170,33 +153,10 @@ namespace TicTacToe
             Players[0].PlayerTile = Tile.TileValue.X;
             Players[1].PlayerTile = Tile.TileValue.O;
         }
-        public void checkwinnerAI()
+        public void PredictMove()
         {
-            if (moveCount >= 5)
-            {
-                string prediction = predictwinner();
-                if (prediction != "E")
-                {
-                    if (prediction == "X")
-                    {
-                        MessageBox.Show("X Wins");
-                        // Players[0].SaveGame("X", Gameboard);
-                        // ResetGame();
-                    }
-                    else if (prediction == "O")
-                    {
-                        MessageBox.Show("O Wins");
-                        // Players[0].SaveGame("O", Gameboard);
-                        // ResetGame();
-                    }
-                    else if (prediction == "DRAW" && moveCount == 9)
-                    {
-                        MessageBox.Show("Draw, no winner");
-                        // Players[0].SaveGame("D", Gameboard);
-                        // ResetGame();
-                    }
-                }
-            }
+         int prediction = Convert.ToInt32(predictwinner());
+            MessageBox.Show("Best tile for you is:" + prediction);
         }
         public void SetBoardState(int x, int y, Tile.TileValue value)
         {
@@ -204,13 +164,14 @@ namespace TicTacToe
             int n = 3;
             moveCount++;
 
-            if (Gameboard[x, y].Value == Tile.TileValue.NaN)
+            Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[x,y].ID, Gameboard);
+
+            if (Gameboard[x, y].Value == Tile.TileValue.E)
             {
                 Gameboard[x, y].Value = value;
             }
             //Game Win-conditions
 
-            //checkwinnerAI();
             
             //check column
             for (int i = 0; i < n; i++)
@@ -260,11 +221,12 @@ namespace TicTacToe
                     }
                 }
             }
+
             
             //check draw
             if (moveCount == (Math.Pow(n, 2)) && Winner != true)
             {
-                MessageBox.Show("Draw, no winner");
+                // MessageBox.Show("Draw, no winner");
                 Players[0].SaveGame("DRAW", Gameboard);
                 ResetGame();
             }
@@ -275,13 +237,8 @@ namespace TicTacToe
                 else
                     Players[0].SaveGame("O", Gameboard);
 
-                MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
+                // MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
                 ResetGame();
-            }
-            else
-            {
-                if(moveCount >= 5)
-                Players[0].SaveGame("E", Gameboard);
             }
             
             
@@ -289,8 +246,13 @@ namespace TicTacToe
 
         private void btnAIMove_Click(object sender, EventArgs e)
         {
-            //for(int i = 0; i < 1000000; i ++)
+           // for(int i = 0; i < 125; i ++)
                 AI_MOVE();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            PredictMove();
         }
     }
 }
