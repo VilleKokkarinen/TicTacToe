@@ -11,7 +11,7 @@ namespace TicTacToeML.ConsoleApp
     class Program
     {
         //Dataset to use for predictions 
-        private const string DATA_FILEPATH = @"C:\Users\ville\source\repos\TicTacToe\GameData.csv";
+        private const string DATA_FILEPATH = @"C:\Users\ville\source\repos\TicTacToe\TicTacToe\bin\x64\Debug\MoveData.csv";
 
         static void Main(string[] args)
         {
@@ -21,7 +21,8 @@ namespace TicTacToeML.ConsoleApp
             // Make a single prediction on the sample data and print results
             ModelOutput predictionResult = ConsumeModel.Predict(sampleData);
 
-            Console.WriteLine("Using model to make single prediction -- Comparing actual Winner with predicted Winner from sample data...\n\n");
+            Console.WriteLine("Using model to make single prediction -- Comparing actual TileID with predicted TileID from sample data...\n\n");
+            Console.WriteLine($"TilePlayed: {sampleData.TilePlayed}");
             Console.WriteLine($"tile1: {sampleData.Tile1}");
             Console.WriteLine($"tile2: {sampleData.Tile2}");
             Console.WriteLine($"tile3: {sampleData.Tile3}");
@@ -31,8 +32,7 @@ namespace TicTacToeML.ConsoleApp
             Console.WriteLine($"tile7: {sampleData.Tile7}");
             Console.WriteLine($"tile8: {sampleData.Tile8}");
             Console.WriteLine($"tile9: {sampleData.Tile9}");
-            Console.WriteLine($"OccupiedTiles: {sampleData.OccupiedTiles}");
-            Console.WriteLine($"\n\nActual Winner: {sampleData.Winner} \nPredicted Winner value {predictionResult.Prediction} \nPredicted Winner scores: [{String.Join(",", predictionResult.Score)}]\n\n");
+            Console.WriteLine($"\n\nActual TileID: {sampleData.TileID} \nPredicted TileID value {predictionResult.Prediction} \nPredicted TileID scores: [{String.Join(",", predictionResult.Score)}]\n\n");
             Console.WriteLine("=============== End of process, hit any key to finish ===============");
             Console.ReadKey();
         }

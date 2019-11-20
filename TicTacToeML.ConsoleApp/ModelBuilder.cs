@@ -12,7 +12,7 @@ namespace TicTacToeML.ConsoleApp
 {
     public static class ModelBuilder
     {
-        private static string TRAIN_DATA_FILEPATH = @"C:\Users\ville\Source\Repos\VilleKokkarinen\TicTacToe\TicTacToe\bin\x64\Debug\MoveData.csv";
+        private static string TRAIN_DATA_FILEPATH = @"C:\Users\ville\source\repos\TicTacToe\TicTacToe\bin\x64\Debug\MoveData.csv";
         private static string MODEL_FILEPATH = @"../../../../TicTacToeML.Model/MLModel.zip";
 
         // Create MLContext to be shared across the model creation workflow objects 
@@ -48,10 +48,11 @@ namespace TicTacToeML.ConsoleApp
             var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey("TileID", "TileID")
                                       .Append(mlContext.Transforms.Categorical.OneHotEncoding(new[] { new InputOutputColumnPair("TilePlayed", "TilePlayed"), new InputOutputColumnPair("tile1", "tile1"), new InputOutputColumnPair("tile2", "tile2"), new InputOutputColumnPair("tile3", "tile3"), new InputOutputColumnPair("tile4", "tile4"), new InputOutputColumnPair("tile5", "tile5"), new InputOutputColumnPair("tile6", "tile6"), new InputOutputColumnPair("tile7", "tile7"), new InputOutputColumnPair("tile8", "tile8"), new InputOutputColumnPair("tile9", "tile9") }))
                                       .Append(mlContext.Transforms.Concatenate("Features", new[] { "TilePlayed", "tile1", "tile2", "tile3", "tile4", "tile5", "tile6", "tile7", "tile8", "tile9" }))
+                                      .Append(mlContext.Transforms.NormalizeMinMax("Features", "Features"))
                                       .AppendCacheCheckpoint(mlContext);
 
             // Set the training algorithm 
-            var trainer = mlContext.MulticlassClassification.Trainers.OneVersusAll(mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: "TileID", featureColumnName: "Features"), labelColumnName: "TileID")
+            var trainer = mlContext.MulticlassClassification.Trainers.OneVersusAll(mlContext.BinaryClassification.Trainers.AveragedPerceptron(labelColumnName: "TileID", numberOfIterations: 10, featureColumnName: "Features"), labelColumnName: "TileID")
                                       .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel", "PredictedLabel"));
             var trainingPipeline = dataProcessPipeline.Append(trainer);
 

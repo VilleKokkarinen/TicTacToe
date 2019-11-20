@@ -66,14 +66,16 @@ namespace Engine
             string MainData = "";
             string boardData = "";
             int occupied = 0;
-            foreach (Tile tile in Gameboard)
+            for (int y = 0; y < Gameboard.GetLength(0); y++)
             {
-                boardData += "," + tile.Value;
-                if (tile.Value != Tile.TileValue.NaN)
-                    occupied++;
+                for (int x = 0; x < Gameboard.GetLength(1); x++)
+                {
+                    Tile tile = Gameboard[x, y];
+                    boardData += "," + tile.Value;
+                    if (tile.Value != Tile.TileValue.NaN)
+                        occupied++;
+                }
             }
-            boardData.Remove(boardData.Length - 1, 1);
-
             MainData += Winner + boardData + "," + occupied + Environment.NewLine;
             return MainData;
         }
@@ -81,12 +83,14 @@ namespace Engine
         {
             string MainData = "";
             string boardData = "";
-            foreach (Tile tile in Gameboard)
+            for(int y = 0; y < Gameboard.GetLength(0); y++)
             {
-                boardData += "," + tile.Value;
+                for (int x = 0; x < Gameboard.GetLength(1); x++)
+                {
+                    Tile tile = Gameboard[x, y];
+                    boardData += "," + tile.Value;
+                }
             }
-            boardData.Remove(boardData.Length - 1, 1);
-
             MainData += TilePlayed +","+ TileID + boardData + Environment.NewLine;
             return MainData;
         }
