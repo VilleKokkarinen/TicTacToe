@@ -37,17 +37,12 @@ namespace TicTacToe
                 SetBoardState(X, Y, value);
                 PlayerTurn = 0;
             }
-            //PredictMove();
-           
+            //PredictMove();           
         }
 
         private void MachineLearningMove()
         {
-            string tileplayed = "";
-            if (PlayerTurn == 0)
-                tileplayed = "O";
-            else
-                tileplayed = "X";
+            string tileplayed = (PlayerTurn == 1) ? "X" : "O";
 
             // Add input data
             var input = new ModelInput();
@@ -71,7 +66,7 @@ namespace TicTacToe
                 legalMoves.Add(tile);
             }
             int ID = Convert.ToInt32(result.Prediction);
-            Tile MoveTile = legalMoves[ID];
+            Tile MoveTile = legalMoves.Find(X => X.ID == ID);
             Panel panel = MoveTile.Panel;
 
             int x = panel.Location.X / 50;
@@ -83,8 +78,10 @@ namespace TicTacToe
             }
             else
             {
+                // MessageBox.Show("Tile was taken, using random move");
                 RANDOM_MOVE();
             }
+
         }
         private void RANDOM_MOVE()
         {
@@ -106,6 +103,7 @@ namespace TicTacToe
             Tile t = Gameboard[x, y];
             if (t.CheckTileState())
             {
+                // Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[x, y].ID, Gameboard);
                 MakeMove(panel, x, y, Players[PlayerTurn].PlayerTile);
             }
         }
@@ -387,8 +385,14 @@ namespace TicTacToe
 
             private void btnAIMove_Click(object sender, EventArgs e)
             {
-                //for(int i = 0; i < 25000; i ++)
-                RANDOM_MOVE();
+            for( int x = 0; x <= 10000; x++ )
+                {
+                    for (int i = 0; i < 10; i++)
+                        PredictMove();
+
+                    RANDOM_MOVE();
+                }
+              
             }
 
             private void button1_Click(object sender, EventArgs e)
