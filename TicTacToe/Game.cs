@@ -39,7 +39,7 @@ namespace TicTacToe
             }
             //PredictMove();           
         }
-
+       
         private void MachineLearningMove()
         {
             string tileplayed = (PlayerTurn == 1) ? "X" : "O";
@@ -59,7 +59,6 @@ namespace TicTacToe
 
             // Load model and predict output of sample data
             ModelOutput result = ConsumeModel.Predict(input);
-            
             List<Tile> legalMoves = new List<Tile>();
             foreach (Tile tile in Gameboard)
             {
@@ -81,7 +80,6 @@ namespace TicTacToe
                 // MessageBox.Show("Tile was taken, using random move");
                 RANDOM_MOVE();
             }
-
         }
         private void RANDOM_MOVE()
         {
@@ -177,8 +175,8 @@ namespace TicTacToe
             {
                 Panel panel = (Panel)sender;
 
-                int x = panel.Location.X / 50;
-                int y = panel.Location.Y / 50;
+                int x = (panel.Location.X -50) / 50;
+                int y = (panel.Location.Y -50) / 50;
 
                 Tile t = Gameboard[x, y];
                 if (t.CheckTileState())
@@ -200,9 +198,29 @@ namespace TicTacToe
             }
             public void AddPanels()
             {
-                Point newLoc = new Point(25, 25);
-                int offset = 25 + 50 + 1;
+                Point newLoc = new Point(50, 50);
+                int offset = 100;
 
+                for (int i = 0; i < 2; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        Panel HorizontalLine = new Panel
+                        {
+                            Size = new Size(150, 3),
+                            Location = new Point(50, 50 * j + offset-2),
+                            BackColor = Color.Black
+                        };
+                        Controls.Add(HorizontalLine);
+                    }
+                    Panel VerticalLine = new Panel
+                    {
+                        Size = new Size(3, 150),
+                        Location = new Point(50 * i + offset-2, 50),
+                        BackColor = Color.Black
+                    };
+                    Controls.Add(VerticalLine);
+                }
                 for (int y = 0; y < Gameboard.GetLength(0); y++)
                 {
                     for (int x = 0; x < Gameboard.GetLength(1); x++)
@@ -210,31 +228,12 @@ namespace TicTacToe
                         Panel p = Gameboard[x, y].Panel;
                         p.Size = new Size(50, 50);
                         p.Location = newLoc;
+                        p.BackColor = Color.Transparent;
                         p.Click += Pnl_Click;
-                        newLoc.Offset(55, 0);
+                        newLoc.Offset(50, 0);
                         Controls.Add(p);
                     }
-                    newLoc.Offset(-165, 55);
-                }
-                for (int i = 0; i < 2; i++)
-                {
-                    for (int j = 0; j < 2; j++)
-                    {
-                        Panel HorizontalLine = new Panel
-                        {
-                            Size = new Size(180, 3),
-                            Location = new Point(15, 55 * j + offset),
-                            BackColor = Color.Black
-                        };
-                        Controls.Add(HorizontalLine);
-                    }
-                    Panel VerticalLine = new Panel
-                    {
-                        Size = new Size(3, 180),
-                        Location = new Point(55 * i + offset, 15),
-                        BackColor = Color.Black
-                    };
-                    Controls.Add(VerticalLine);
+                    newLoc.Offset(-150, 50);
                 }
             }
 
@@ -385,14 +384,7 @@ namespace TicTacToe
 
             private void btnAIMove_Click(object sender, EventArgs e)
             {
-            for( int x = 0; x <= 10000; x++ )
-                {
-                    for (int i = 0; i < 10; i++)
-                        PredictMove();
-
                     RANDOM_MOVE();
-                }
-              
             }
 
             private void button1_Click(object sender, EventArgs e)
@@ -400,5 +392,17 @@ namespace TicTacToe
                 //PredictMove();
                 MachineLearningMove();
             }
+
+        private void btnPlayers_Click(object sender, EventArgs e)
+        {
+            Options opt = new Options();
+            opt.ShowDialog();
         }
+
+        private void btnHighScores_Click(object sender, EventArgs e)
+        {
+            HighScores hiscores = new HighScores();
+            hiscores.ShowDialog();
+        }
+    }
     }
