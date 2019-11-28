@@ -15,8 +15,8 @@ namespace Engine
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        private Player _Winner;
-        public Player Winner
+        private string _Winner;
+        public string Winner
         {
             get { return _Winner; }
             private set
@@ -34,12 +34,12 @@ namespace Engine
             }
         }
 
-        private void AddWinner(Player winner)
+        private void AddWinner(string winner)
         {
             Winner = winner;
         }
 
-        public bool Reset { get; set; }
+        public bool Over { get; set; }
         public Player[] Players { get; set; }
         public void CreateDefaultPlayers()
         {
@@ -57,13 +57,12 @@ namespace Engine
         public void CreateDefaultGame()
         {
             Gameboard = GameBoard.ReturnBoard();
-            Reset = false;
+            Over = false;
             CreateDefaultPlayers();
             PlayerTurn = 0;
             Players[0].PlayerTile = Tile.TileValue.X;
             Players[1].PlayerTile = Tile.TileValue.O;
-        }
-
+        }      
         public void SetBoardState(int x, int y, Tile.TileValue value)
         {
             bool Winner = false;
@@ -87,6 +86,7 @@ namespace Engine
                 if (i == n - 1)
                 {
                     Winner = true;
+                    drawing.DrawWinnerLineVertical(Gameboard[x, 0].Panel, Gameboard[x, 1].Panel, Gameboard[x, 2].Panel);
                 }
             }
             //check row
@@ -97,6 +97,7 @@ namespace Engine
                 if (i == n - 1)
                 {
                     Winner = true;
+                    drawing.DrawWinnerLineHorizontal(Gameboard[0, y].Panel, Gameboard[1, y].Panel, Gameboard[2, y].Panel);
                 }
             }
 
@@ -110,6 +111,7 @@ namespace Engine
                     if (i == n - 1)
                     {
                         Winner = true;
+                        drawing.DrawWinnerLineDiagonal(Gameboard[0, 0].Panel, Gameboard[1, 1].Panel, Gameboard[2, 2].Panel);
                     }
                 }
             }
@@ -124,6 +126,7 @@ namespace Engine
                     if (i == n - 1)
                     {
                         Winner = true;
+                        drawing.DrawWinnerLineAntiDiagonal(Gameboard[0, 2].Panel, Gameboard[1, 1].Panel, Gameboard[2, 0].Panel);
                     }
                 }
             }
@@ -131,34 +134,35 @@ namespace Engine
 
             //check draw
             if (moveCount == (Math.Pow(n, 2)) && Winner != true)
-            {                
-                // MessageBox.Show("Draw, no winner");
+            {
+                AddWinner("Draw");
                 Players[0].SaveGame("DRAW", Gameboard);
-                ResetGame();
+                Over = true;
             }
             if (Winner == true)
             {
+                Over = true;
+
                 if (value == Tile.TileValue.X)
                     Players[0].SaveGame("X", Gameboard);
                 else
                     Players[0].SaveGame("O", Gameboard);
 
-                AddWinner(Players.FirstOrDefault(X => X.PlayerTile == value));
-                RaiseMessage("Player " + this.Winner.PlayerTile + " wins");
-                ResetGame();
+                AddWinner(Players.FirstOrDefault(X => X.PlayerTile == value).PlayerTile.ToString());
+                RaiseMessage("Player " + this.Winner + " wins");
             }
         }
         public void ResetGame()
         {
             Gameboard = GameBoard.ReturnBoard();
             moveCount = 0;
-            PlayerTurn = 0;
+            Winner = null;
 
             foreach (Tile tile in Gameboard)
             {
                 tile.Value = Tile.TileValue.NaN;
             }
-            Reset = true;
+            Over = false;
         }
         private bool CheckWinningMove(int x, int y, Tile.TileValue value)
         {
@@ -238,8 +242,8 @@ namespace Engine
             }
             Tile randomTile = legalMoves[r.Next(0, legalMoves.Count - 1)];
 
-            int x = randomTile.Panel.Location.X / 50;
-            int y = randomTile.Panel.Location.Y / 50;
+            int x = (randomTile.Panel.Location.X - 50) / 50;
+            int y = (randomTile.Panel.Location.Y - 50) / 50;
             Tile t = Gameboard[x, y];
             if (t.CheckTileState())
             {
@@ -302,19 +306,21 @@ namespace Engine
         }
         public void MakeMove(int X, int Y, Tile.TileValue value)
         {
-            // Check if tile is actually empty <-->
-            if (PlayerTurn == 0)
+            if(Winner == null)
             {
-                drawing.DrawCross(Gameboard[X, Y].Panel);
-            }
-            else
-            {
-                drawing.DrawCircle(Gameboard[X, Y].Panel);
-            }
+                if (PlayerTurn == 0)
+                {
+                    drawing.DrawCross(Gameboard[X, Y].Panel);
+                }
+                else
+                {
+                    drawing.DrawCircle(Gameboard[X, Y].Panel);
+                }
 
-            SetBoardState(X, Y, value);
-            SwitchPlayerTurn();
-            //PredictMove();           
+                SetBoardState(X, Y, value);
+                SwitchPlayerTurn();
+                //PredictMove();           
+            }
         }
     }
 }

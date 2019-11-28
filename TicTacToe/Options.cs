@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,29 @@ namespace TicTacToe
 {
     public partial class Options : Form
     {
-        public Options()
+        
+
+        GameLogic game;
+        public Options(ref GameLogic game)
         {
             InitializeComponent();
+            this.game = game;
+        }
+
+        void SaveData()
+        {
+            game.Players[0].PlayerName = txtPlayerNameX.Text;
+            game.Players[1].PlayerName = txtPlayerNameO.Text;
+        }
+        private void Options_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveData();
+        }
+
+        private void Options_FormClosing(object sender, EventArgs e)
+        {
+            SaveData();
+            Close();
         }
     }
 }

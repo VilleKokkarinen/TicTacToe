@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.txtPlayerNameX = new System.Windows.Forms.TextBox();
             this.txtPlayerNameO = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -35,6 +36,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.chkThinkTime = new System.Windows.Forms.CheckBox();
             this.chkAutomaticWinLoss = new System.Windows.Forms.CheckBox();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // txtPlayerNameX
@@ -77,15 +79,19 @@
             this.button1.TabIndex = 4;
             this.button1.Text = "< Go back <";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Options_FormClosing);
             // 
             // chkThinkTime
             // 
             this.chkThinkTime.AutoSize = true;
+            this.chkThinkTime.Checked = true;
+            this.chkThinkTime.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkThinkTime.Location = new System.Drawing.Point(16, 223);
             this.chkThinkTime.Name = "chkThinkTime";
-            this.chkThinkTime.Size = new System.Drawing.Size(131, 17);
+            this.chkThinkTime.Size = new System.Drawing.Size(118, 17);
             this.chkThinkTime.TabIndex = 5;
-            this.chkThinkTime.Text = "Disable-Thinking Time";
+            this.chkThinkTime.Text = "CPU Thinking Time";
+            this.toolTip.SetToolTip(this.chkThinkTime, "Enables the small amount of time before CPU makes a move");
             this.chkThinkTime.UseVisualStyleBackColor = true;
             // 
             // chkAutomaticWinLoss
@@ -96,9 +102,11 @@
             this.chkAutomaticWinLoss.Size = new System.Drawing.Size(194, 17);
             this.chkAutomaticWinLoss.TabIndex = 6;
             this.chkAutomaticWinLoss.Text = "Automatic- Winner / Loss preventer";
+            this.toolTip.SetToolTip(this.chkAutomaticWinLoss, "Enables automatic win condition, when there are 2 of same Tile on the gameboard, " +
+        "on a singe line");
             this.chkAutomaticWinLoss.UseVisualStyleBackColor = true;
             // 
-            // Players
+            // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -110,8 +118,9 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtPlayerNameO);
             this.Controls.Add(this.txtPlayerNameX);
-            this.Name = "Players";
+            this.Name = "Options";
             this.Text = "Options";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Options_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -126,5 +135,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chkThinkTime;
         private System.Windows.Forms.CheckBox chkAutomaticWinLoss;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
