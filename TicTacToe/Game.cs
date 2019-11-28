@@ -16,51 +16,30 @@ namespace TicTacToe
 {
     public partial class Game : Form
     {
-        private Player[] Players = { Player.CreateDefaultPlayer(), Player.CreateDefaultPlayer() };
-        private int PlayerTurn = 0;
-        private Drawing drawing = new Drawing();
-
-        private int moveCount;
-        Tile[,] Gameboard = GameBoard.ReturnBoard();
-
-        private void MakeMove(Panel p, int X, int Y, Tile.TileValue value)
-        {
-            if (PlayerTurn == 0)
-            {
-                drawing.DrawCross(p);
-                SetBoardState(X, Y, value);
-                PlayerTurn = 1;
-            }
-            else
-            {
-                drawing.DrawCircle(p);
-                SetBoardState(X, Y, value);
-                PlayerTurn = 0;
-            }
-            //PredictMove();           
-        }
+        private GameLogic _Game = new GameLogic();
        
         private void MachineLearningMove()
         {
-            string tileplayed = (PlayerTurn == 1) ? "X" : "O";
+            string tileplayed = (_Game.PlayerTurn == 1) ? "X" : "O";
 
             // Add input data
             var input = new ModelInput();
-            input.Tile1 = Gameboard[0, 0].Value.ToString();
-            input.Tile2 = Gameboard[1, 0].Value.ToString();
-            input.Tile3 = Gameboard[2, 0].Value.ToString();
-            input.Tile4 = Gameboard[0, 1].Value.ToString();
-            input.Tile5 = Gameboard[1, 1].Value.ToString();
-            input.Tile6 = Gameboard[2, 1].Value.ToString();
-            input.Tile7 = Gameboard[0, 2].Value.ToString();
-            input.Tile8 = Gameboard[1, 2].Value.ToString();
-            input.Tile9 = Gameboard[2, 2].Value.ToString();
+            input.Tile1 = _Game.Gameboard[0, 0].Value.ToString();
+            input.Tile2 = _Game.Gameboard[1, 0].Value.ToString();
+            input.Tile3 = _Game.Gameboard[2, 0].Value.ToString();
+            input.Tile4 = _Game.Gameboard[0, 1].Value.ToString();
+            input.Tile5 = _Game.Gameboard[1, 1].Value.ToString();
+            input.Tile6 = _Game.Gameboard[2, 1].Value.ToString();
+            input.Tile7 = _Game.Gameboard[0, 2].Value.ToString();
+            input.Tile8 = _Game.Gameboard[1, 2].Value.ToString();
+            input.Tile9 = _Game.Gameboard[2, 2].Value.ToString();
             input.TilePlayed = tileplayed;
 
             // Load model and predict output of sample data
             ModelOutput result = ConsumeModel.Predict(input);
+            
             List<Tile> legalMoves = new List<Tile>();
-            foreach (Tile tile in Gameboard)
+            foreach (Tile tile in _Game.Gameboard)
             {
                 legalMoves.Add(tile);
             }
@@ -70,321 +49,98 @@ namespace TicTacToe
 
             int x = panel.Location.X / 50;
             int y = panel.Location.Y / 50;
-            Tile t = Gameboard[x, y];
+            Tile t = _Game.Gameboard[x, y];
             if (t.CheckTileState())
             {
-                MakeMove(panel, x, y, Players[PlayerTurn].PlayerTile);
+                _Game.MakeMove( x, y, _Game.Players[_Game.PlayerTurn].PlayerTile);
             }
             else
             {
                 // MessageBox.Show("Tile was taken, using random move");
-                RANDOM_MOVE();
+                _Game.RANDOM_MOVE();
             }
-        }
-        private void RANDOM_MOVE()
-        {
-            Random r = new Random();
-            List<Tile> legalMoves = new List<Tile>();
-            foreach (Tile tile in Gameboard)
-            {
-                if (tile.Value == Tile.TileValue.NaN)
-                {
-                    legalMoves.Add(tile);
-                }
 
-            }
-            Tile randomTile = legalMoves[r.Next(0, legalMoves.Count - 1)];
-            Panel panel = randomTile.Panel;
-
-            int x = panel.Location.X / 50;
-            int y = panel.Location.Y / 50;
-            Tile t = Gameboard[x, y];
-            if (t.CheckTileState())
-            {
-                // Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[x, y].ID, Gameboard);
-                MakeMove(panel, x, y, Players[PlayerTurn].PlayerTile);
-            }
         }
+       
         
-            private bool CheckWinningMove(int x, int y, Tile.TileValue value)
-            {
-                bool Winner = false;
-                int n = 3;
-
-                Tile[,] board = Gameboard;
-                //check column
-
-                if (board[x, y].Value == Tile.TileValue.NaN)
-                {
-                    board[x, y].Value = value;
-                }
-
-                for (int i = 0; i < n; i++)
-                {
-                    if (board[x, i].Value != value)
-                        break;
-                    if (i == n - 1)
-                    {
-                        Winner = true;
-                    }
-                }
-                //check row
-                for (int i = 0; i < n; i++)
-                {
-                    if (board[i, y].Value != value)
-                        break;
-                    if (i == n - 1)
-                    {
-                        Winner = true;
-                    }
-                }
-
-                //check diagonal
-                if (x == y)
-                {
-                    for (int i = 0; i < n; i++)
-                    {
-                        if (board[i, i].Value != value)
-                            break;
-                        if (i == n - 1)
-                        {
-                            Winner = true;
-                        }
-                    }
-                }
-
-                //check diagonal (the other way)
-                if (x + y == n - 1)
-                {
-                    for (int i = 0; i < n; i++)
-                    {
-                        if (board[i, (n - 1) - i].Value != value)
-                            break;
-                        if (i == n - 1)
-                        {
-                            Winner = true;
-                        }
-                    }
-                }
-                //revert changes
-                board[x, y].Value = Tile.TileValue.NaN;
-                return Winner;
-            }
-
             private void Pnl_Click(object sender, EventArgs e)
             {
                 Panel panel = (Panel)sender;
 
-                int x = (panel.Location.X -50) / 50;
-                int y = (panel.Location.Y -50) / 50;
+                int x = panel.Location.X / 50;
+                int y = panel.Location.Y / 50;
 
-                Tile t = Gameboard[x, y];
+                Tile t = _Game.Gameboard[x, y];
                 if (t.CheckTileState())
                 {
-                    MakeMove(panel, x, y, Players[PlayerTurn].PlayerTile);
-                }
-            }
-            public void ResetGame()
-            {
-                Gameboard = GameBoard.ReturnBoard();
-                moveCount = 0;
-                PlayerTurn = 0;
+                    lblWinner.Text = "";
+                    _Game.MakeMove(x, y, _Game.Players[_Game.PlayerTurn].PlayerTile);
 
-                foreach (Tile tile in Gameboard)
+                if (_Game.Reset == true)
                 {
-                    tile.Value = Tile.TileValue.NaN;
+                    lblWinner.Text = "Winner: " + _Game.Winner.PlayerTile.ToString();
+                    _Game.Reset = false;
+                    Refresh();
                 }
-                Refresh();
+                }
             }
+         
             public void AddPanels()
             {
-                Point newLoc = new Point(50, 50);
-                int offset = 100;
+                Point newLoc = new Point(25, 25);
+                int offset = 25 + 50 + 1;
 
+                for (int y = 0; y < _Game.Gameboard.GetLength(0); y++)
+                {
+                    for (int x = 0; x < _Game.Gameboard.GetLength(1); x++)
+                    {
+                        Panel p = _Game.Gameboard[x, y].Panel;
+                        p.Size = new Size(50, 50);
+                        p.Location = newLoc;
+                        p.Click += Pnl_Click;
+                        newLoc.Offset(55, 0);
+                        Controls.Add(p);
+                    }
+                    newLoc.Offset(-165, 55);
+                }
                 for (int i = 0; i < 2; i++)
                 {
                     for (int j = 0; j < 2; j++)
                     {
                         Panel HorizontalLine = new Panel
                         {
-                            Size = new Size(150, 3),
-                            Location = new Point(50, 50 * j + offset-2),
+                            Size = new Size(180, 3),
+                            Location = new Point(15, 55 * j + offset),
                             BackColor = Color.Black
                         };
                         Controls.Add(HorizontalLine);
                     }
                     Panel VerticalLine = new Panel
                     {
-                        Size = new Size(3, 150),
-                        Location = new Point(50 * i + offset-2, 50),
+                        Size = new Size(3, 180),
+                        Location = new Point(55 * i + offset, 15),
                         BackColor = Color.Black
                     };
                     Controls.Add(VerticalLine);
-                }
-                for (int y = 0; y < Gameboard.GetLength(0); y++)
-                {
-                    for (int x = 0; x < Gameboard.GetLength(1); x++)
-                    {
-                        Panel p = Gameboard[x, y].Panel;
-                        p.Size = new Size(50, 50);
-                        p.Location = newLoc;
-                        p.BackColor = Color.Transparent;
-                        p.Click += Pnl_Click;
-                        newLoc.Offset(50, 0);
-                        Controls.Add(p);
-                    }
-                    newLoc.Offset(-150, 50);
                 }
             }
 
             public Game()
             {
                 InitializeComponent();
+                _Game.CreateDefaultGame();
                 AddPanels();
-                Players[0].PlayerTile = Tile.TileValue.X;
-                Players[1].PlayerTile = Tile.TileValue.O;
             }
-            public void PredictMove()
-            {
-                List<Tile> legalMoves = new List<Tile>();
-                foreach (Tile tile in Gameboard)
-                {
-                    if (tile.Value == Tile.TileValue.NaN)
-                    {
-                        legalMoves.Add(tile);
-                    }
-                }
-
-                bool winningmove = false;
-                bool opponentwinningmove = false;
-                int MoveX = 0;
-                int MoveY = 0;
-
-                // Executes a winning move if one exists, otherwise executes a move that doesn't allow the opponent to win (unless opponent has a position with 2 or more winning tiles)
-                for (int i = 0; i < legalMoves.Count; i++)
-                {
-                    winningmove = CheckWinningMove(legalMoves[i].X, legalMoves[i].Y, Players[PlayerTurn].PlayerTile);
-                    opponentwinningmove = CheckWinningMove(legalMoves[i].X, legalMoves[i].Y, Players[PlayerTurn == 1 ? 0 : 1].PlayerTile);
-                    if (winningmove)
-                    {
-                        MoveX = legalMoves[i].X;
-                        MoveY = legalMoves[i].Y;
-                        //MessageBox.Show("Winning Tile" + " for " + Players[PlayerTurn].PlayerTile +" is: " + legalMoves[i].X.ToString() + "," + legalMoves[i].Y.ToString());
-                        break;
-                    }
-                    if (opponentwinningmove)
-                    {
-                        MoveX = legalMoves[i].X;
-                        MoveY = legalMoves[i].Y;
-                        //MessageBox.Show("Winning Tile" + " for " + Players[PlayerTurn].PlayerTile +" is: " + legalMoves[i].X.ToString() + "," + legalMoves[i].Y.ToString());
-                        break;
-                    }
-                }
-                if (winningmove)
-                {
-                    if (Gameboard[MoveX, MoveY].CheckTileState())
-                    {
-                        Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard);
-                        MakeMove(Gameboard[MoveX, MoveY].Panel, MoveX, MoveY, Players[PlayerTurn].PlayerTile);
-                    }
-                }
-                else if (opponentwinningmove)
-                {
-                    if (Gameboard[MoveX, MoveY].CheckTileState())
-                    {
-                        Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard);
-                        MakeMove(Gameboard[MoveX, MoveY].Panel, MoveX, MoveY, Players[PlayerTurn].PlayerTile);
-                    }
-            }
-
-            }
-            public void SetBoardState(int x, int y, Tile.TileValue value)
-            {
-                bool Winner = false;
-                int n = 3;
-                moveCount++;
-
-                //Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[x, y].ID, Gameboard);
-
-                if (Gameboard[x, y].Value == Tile.TileValue.NaN)
-                {
-                    Gameboard[x, y].Value = value;
-                }
-                //Game Win-conditions
-
-
-                //check column
-                for (int i = 0; i < n; i++)
-                {
-                    if (Gameboard[x, i].Value != value)
-                        break;
-                    if (i == n - 1)
-                    {
-                        Winner = true;
-                    }
-                }
-                //check row
-                for (int i = 0; i < n; i++)
-                {
-                    if (Gameboard[i, y].Value != value)
-                        break;
-                    if (i == n - 1)
-                    {
-                        Winner = true;
-                    }
-                }
-
-                //check diagonal
-                if (x == y)
-                {
-                    for (int i = 0; i < n; i++)
-                    {
-                        if (Gameboard[i, i].Value != value)
-                            break;
-                        if (i == n - 1)
-                        {
-                            Winner = true;
-                        }
-                    }
-                }
-
-                //check diagonal (the other way)
-                if (x + y == n - 1)
-                {
-                    for (int i = 0; i < n; i++)
-                    {
-                        if (Gameboard[i, (n - 1) - i].Value != value)
-                            break;
-                        if (i == n - 1)
-                        {
-                            Winner = true;
-                        }
-                    }
-                }
-
-
-                //check draw
-                if (moveCount == (Math.Pow(n, 2)) && Winner != true)
-                {
-                    MessageBox.Show("Draw, no winner");
-                    Players[0].SaveGame("DRAW", Gameboard);
-                    ResetGame();
-                }
-                if (Winner == true)
-                {
-                    if (value == Tile.TileValue.X)
-                        Players[0].SaveGame("X", Gameboard);
-                    else
-                        Players[0].SaveGame("O", Gameboard);
-
-                    MessageBox.Show("winner:" + Enum.GetName(typeof(Tile.TileValue), value));
-                    ResetGame();
-                }
-            }            
+           
+             
 
             private void btnAIMove_Click(object sender, EventArgs e)
             {
-                    RANDOM_MOVE();
+                for( int x = 0; x <= 10000; x++ ) {
+                    for (int i = 0; i < 10; i++)
+                        _Game.PredictMove();
+                    _Game.RANDOM_MOVE();
+                }              
             }
 
             private void button1_Click(object sender, EventArgs e)
@@ -392,17 +148,5 @@ namespace TicTacToe
                 //PredictMove();
                 MachineLearningMove();
             }
-
-        private void btnPlayers_Click(object sender, EventArgs e)
-        {
-            Options opt = new Options();
-            opt.ShowDialog();
         }
-
-        private void btnHighScores_Click(object sender, EventArgs e)
-        {
-            HighScores hiscores = new HighScores();
-            hiscores.ShowDialog();
-        }
-    }
     }

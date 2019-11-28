@@ -21,10 +21,7 @@ namespace Engine
 
         protected void OnPropertyChanged(string name)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         public int ExperiencePoints
         {
@@ -116,7 +113,7 @@ namespace Engine
         {
             ExperiencePoints += experiencePointsToAdd;
         }
-
+      
         private void CreateNewChildXmlNode(XmlDocument document, XmlNode parentNode, string elementName, object value)
         {
             XmlNode node = document.CreateElement(elementName);
@@ -160,11 +157,11 @@ namespace Engine
             File.AppendAllText("MoveData.csv", savedata);
         }
 
-        private void RaiseMessage(string message, bool addExtraNewLine = false)
+        private void RaiseMessage(string message)
         {
             if (OnMessage != null)
             {
-                OnMessage(this, new MessageEventArgs(message, addExtraNewLine));
+                OnMessage(this, new MessageEventArgs(message));
             }
         }
     }

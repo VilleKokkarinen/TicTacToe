@@ -88,6 +88,7 @@
   <ItemGroup>
     <Compile Include="Coordinate.cs" />
     <Compile Include="GameBoard.cs" />
+    <Compile Include="GameLogic.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Drawing.cs" />
     <Compile Include="Tile.cs" />
