@@ -97,7 +97,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::TicTacToe.Properties.Resources.BackGroundPlayArea;
+            this.BackgroundImage = global::TicTacToe.Properties.Resources.Tile;
             this.ClientSize = new System.Drawing.Size(501, 471);
             this.Controls.Add(this.btnHiScores);
             this.Controls.Add(this.btnOptions);

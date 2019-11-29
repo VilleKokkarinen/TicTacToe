@@ -6,26 +6,31 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
-    public static class GameBoard
+    public class GameBoard
     {
-        private static readonly Tile[,] Board = new Tile[3, 3]
-        {
-            { new Tile(0, 0, 0, Tile.TileValue.NaN, new System.Windows.Forms.Panel()), new Tile(3, 0, 1, Tile.TileValue.NaN, new System.Windows.Forms.Panel()), new Tile(6, 0, 2, Tile.TileValue.NaN, new System.Windows.Forms.Panel()) },
-            { new Tile(1, 1, 0, Tile.TileValue.NaN, new System.Windows.Forms.Panel()), new Tile(4, 1, 1, Tile.TileValue.NaN, new System.Windows.Forms.Panel()), new Tile(7, 1, 2, Tile.TileValue.NaN, new System.Windows.Forms.Panel()) },
-            { new Tile(2, 2, 0, Tile.TileValue.NaN, new System.Windows.Forms.Panel()), new Tile(5, 2, 1, Tile.TileValue.NaN, new System.Windows.Forms.Panel()), new Tile(8, 2, 2, Tile.TileValue.NaN, new System.Windows.Forms.Panel()) }
-        };
+        private Tile[,] Board;
 
-        static GameBoard()
+        public GameBoard(int Size = 3)
         {
-            PopulateBoard();
+            Board = new Tile[Size, Size];
+            MakeBoardOfSize(Size);
         }
 
-        private static void PopulateBoard()
+        private void MakeBoardOfSize(int Size = 3)
         {
-          
+           int ID = 0;
+
+           for(int X = 0; X < Size; X++)
+           {
+                for(int Y = 0; Y < Size; Y++)
+                {
+                    Board[X, Y] = new Tile(ID, 0, 0, Tile.TileValue.NaN, new System.Windows.Forms.Panel());
+                    ID++;
+                }
+           }
         }
 
-        public static Tile[,] ReturnBoard()
+        public Tile[,] ReturnBoard()
         {
             return Board;
         }

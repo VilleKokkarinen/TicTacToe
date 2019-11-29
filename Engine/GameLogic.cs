@@ -54,9 +54,12 @@ namespace Engine
         private Drawing drawing = new Drawing();
         private int moveCount { get; set; }
         public Tile[,] Gameboard { get; set; }
+
+        GameBoard gb = new GameBoard();
+
         public void CreateDefaultGame()
         {
-            Gameboard = GameBoard.ReturnBoard();
+            Gameboard = gb.ReturnBoard();
             Over = false;
             CreateDefaultPlayers();
             PlayerTurn = 0;
@@ -66,7 +69,7 @@ namespace Engine
         public void SetBoardState(int x, int y, Tile.TileValue value)
         {
             bool Winner = false;
-            int n = 3;
+            int n = Gameboard.GetLength(0);
             moveCount++;
 
             //Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[x, y].ID, Gameboard);
@@ -86,7 +89,12 @@ namespace Engine
                 if (i == n - 1)
                 {
                     Winner = true;
-                    drawing.DrawWinnerLineVertical(Gameboard[x, 0].Panel, Gameboard[x, 1].Panel, Gameboard[x, 2].Panel);
+                    List<System.Windows.Forms.Panel> WinningPanels = new List<System.Windows.Forms.Panel>();
+                    for (int p = 0; p < n; p++)
+                    {
+                        WinningPanels.Add(Gameboard[x, p].Panel);
+                    }
+                    drawing.DrawWinnerLineHorizontal(WinningPanels.ToArray());
                 }
             }
             //check row
@@ -97,7 +105,12 @@ namespace Engine
                 if (i == n - 1)
                 {
                     Winner = true;
-                    drawing.DrawWinnerLineHorizontal(Gameboard[0, y].Panel, Gameboard[1, y].Panel, Gameboard[2, y].Panel);
+                    List<System.Windows.Forms.Panel> WinningPanels = new List<System.Windows.Forms.Panel>();
+                    for (int p = 0; p < n; p++)
+                    {
+                        WinningPanels.Add(Gameboard[p, y].Panel);
+                    }
+                    drawing.DrawWinnerLineVertical(WinningPanels.ToArray());
                 }
             }
 
@@ -111,7 +124,12 @@ namespace Engine
                     if (i == n - 1)
                     {
                         Winner = true;
-                        drawing.DrawWinnerLineDiagonal(Gameboard[0, 0].Panel, Gameboard[1, 1].Panel, Gameboard[2, 2].Panel);
+                        List<System.Windows.Forms.Panel> WinningPanels = new List<System.Windows.Forms.Panel>();
+                        for (int p = 0; p < n; p++)
+                        {
+                            WinningPanels.Add(Gameboard[p, p].Panel);
+                        }
+                        drawing.DrawWinnerLineDiagonal(WinningPanels.ToArray());
                     }
                 }
             }
@@ -126,7 +144,13 @@ namespace Engine
                     if (i == n - 1)
                     {
                         Winner = true;
-                        drawing.DrawWinnerLineAntiDiagonal(Gameboard[0, 2].Panel, Gameboard[1, 1].Panel, Gameboard[2, 0].Panel);
+                        // drawing.DrawWinnerLineAntiDiagonal(Gameboard[0, 2].Panel, Gameboard[1, 1].Panel, Gameboard[2, 0].Panel);
+                        List<System.Windows.Forms.Panel> WinningPanels = new List<System.Windows.Forms.Panel>();
+                        for (int p = 0; p < n; p++)
+                        {
+                            WinningPanels.Add(Gameboard[p, (n - 1)-p].Panel);
+                        }
+                        drawing.DrawWinnerLineAntiDiagonal(WinningPanels.ToArray());
                     }
                 }
             }
@@ -154,7 +178,7 @@ namespace Engine
         }
         public void ResetGame()
         {
-            Gameboard = GameBoard.ReturnBoard();
+            Gameboard = gb.ReturnBoard();
             moveCount = 0;
             Winner = null;
 

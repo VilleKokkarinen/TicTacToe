@@ -34,49 +34,42 @@ namespace Engine
             g.DrawLine(_pen, new Point(_Margin, _Size - _Margin), new Point(_Size - _Margin, _Margin));
 
         }
-        public void DrawWinnerLineVertical(Panel pnl1, Panel pnl2, Panel pnl3)
+        public void DrawWinnerLineVertical(Panel[] panels)
         {
-            Graphics g = pnl1.CreateGraphics();
             Pen _pen = new Pen(Color.Green, _LineWidth * 2);
-
-            g.DrawLine(_pen, new Point(_Size/2, 0), new Point(_Size/2, _Size));
-            g = pnl2.CreateGraphics();
-            g.DrawLine(_pen, new Point(_Size / 2, 0), new Point(_Size / 2, _Size));
-            g = pnl3.CreateGraphics();
-            g.DrawLine(_pen, new Point(_Size / 2, 0), new Point(_Size / 2, _Size));
+            foreach (Panel p in panels)
+            {
+                Graphics g = p.CreateGraphics();
+                g.DrawLine(_pen, new Point(0, _Size / 2), new Point(_Size, _Size / 2));
+            }
         }
-        public void DrawWinnerLineHorizontal(Panel pnl1, Panel pnl2, Panel pnl3)
+        public void DrawWinnerLineHorizontal(Panel[] panels)
         {
-            Graphics g = pnl1.CreateGraphics();
             Pen _pen = new Pen(Color.Green, _LineWidth * 2);
-
-            g.DrawLine(_pen, new Point(0, _Size / 2), new Point(_Size, _Size / 2));
-            g = pnl2.CreateGraphics();
-            g.DrawLine(_pen, new Point(0, _Size / 2), new Point(_Size, _Size / 2));
-            g = pnl3.CreateGraphics();
-            g.DrawLine(_pen, new Point(0, _Size / 2), new Point(_Size, _Size / 2));
+            foreach (Panel p in panels)
+            {
+                Graphics g = p.CreateGraphics();
+                g.DrawLine(_pen, new Point(_Size / 2, 0), new Point(_Size / 2, _Size));
+            }
         }
-        public void DrawWinnerLineDiagonal(Panel pnl1, Panel pnl2, Panel pnl3)
+        public void DrawWinnerLineDiagonal(Panel[] panels)
         {
-            Graphics g = pnl1.CreateGraphics();
             Pen _pen = new Pen(Color.Green, _LineWidth * 2);
-
-            g.DrawLine(_pen, new Point(0, 0), new Point(_Size, _Size));
-            g = pnl2.CreateGraphics();
-            g.DrawLine(_pen, new Point(0, 0), new Point(_Size, _Size));
-            g = pnl3.CreateGraphics();
-            g.DrawLine(_pen, new Point(0, 0), new Point(_Size, _Size));
+            foreach (Panel p in panels)
+            {
+                Graphics g = p.CreateGraphics();
+                g.DrawLine(_pen, new Point(0, 0), new Point(_Size, _Size));
+            }
         }
-        public void DrawWinnerLineAntiDiagonal(Panel pnl1, Panel pnl2, Panel pnl3)
+        public void DrawWinnerLineAntiDiagonal(Panel[] panels)
         {
-            Graphics g = pnl1.CreateGraphics();
-            Pen _pen = new Pen(Color.Green, _LineWidth*2);
+            Pen _pen = new Pen(Color.Green, _LineWidth * 2);
+            foreach (Panel p in panels)
+            {
+                Graphics g = p.CreateGraphics();
 
-            g.DrawLine(_pen, new Point(_Size, 0), new Point(0, _Size));
-            g = pnl2.CreateGraphics();
-            g.DrawLine(_pen, new Point(_Size, 0), new Point(0, _Size));
-            g = pnl3.CreateGraphics();
-            g.DrawLine(_pen, new Point(_Size, 0), new Point(0, _Size));
+                g.DrawLine(_pen, new Point(_Size, 0), new Point(0, _Size));
+            }
         }
     }
 }

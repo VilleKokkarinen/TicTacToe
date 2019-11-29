@@ -53,8 +53,8 @@ namespace TicTacToe
             Tile MoveTile = legalMoves.Find(X => X.ID == ID);
             Panel panel = MoveTile.Panel;
 
-            int x = panel.Location.X / 50;
-            int y = panel.Location.Y / 50;
+            int x = (panel.Location.X - 50) / 50;
+            int y = (panel.Location.Y - 50) / 50;
             Tile t = Game.Gameboard[x, y];
             if (t.CheckTileState())
             {
@@ -89,13 +89,13 @@ namespace TicTacToe
         Point newLoc = new Point(50, 50);
         int offset = 100;
 
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < Game.Gameboard.GetLength(0)-1; i++)
         {
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < Game.Gameboard.GetLength(1)-1; j++)
             {
                 Panel HorizontalLine = new Panel
                 {
-                    Size = new Size(150, 3),
+                    Size = new Size(Game.Gameboard.GetLength(0) * 50, 3),
                     Location = new Point(50, 50 * j + offset - 2),
                     BackColor = Color.Black
                 };
@@ -103,7 +103,7 @@ namespace TicTacToe
             }
             Panel VerticalLine = new Panel
             {
-                Size = new Size(3, 150),
+                Size = new Size(3, Game.Gameboard.GetLength(0) * 50),
                 Location = new Point(50 * i + offset - 2, 50),
                 BackColor = Color.Black
             };
@@ -121,7 +121,7 @@ namespace TicTacToe
                 newLoc.Offset(50, 0);
                 Controls.Add(p);
             }
-            newLoc.Offset(-150, 50);
+            newLoc.Offset(-1 * Game.Gameboard.GetLength(0) * 50, 50);
         }
         }
 
