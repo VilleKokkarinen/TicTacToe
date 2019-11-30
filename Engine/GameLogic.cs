@@ -1,102 +1,147 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Engine
 {
-    public class GameLogic: INotifyPropertyChanged
+    /// <summary>
+    /// Class containing the full Logical operations of a game
+    /// </summary>
+    public class GameLogic
     {
-        public event EventHandler<MessageEventArgs> OnMessage;
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-        private string _Winner;
-        public string Winner
-        {
-            get { return _Winner; }
-            private set
-            {
-                _Winner = value;
-                OnPropertyChanged("Winner");
-                OnPropertyChanged("Winner");
-            }
-        }
-        private void RaiseMessage(string message)
-        {
-            if (OnMessage != null)
-            {
-                OnMessage(this, new MessageEventArgs(message));
-            }
-        }
+        /// <summary>
+        /// The current "Winner" of the game
+        /// </summary>
+        public string Winner { get; set; }
 
-        private void AddWinner(string winner)
-        {
-            Winner = winner;
-        }
-
+        /// <summary>
+        /// Game Over variable
+        /// </summary>
         public bool Over { get; set; }
-        public Player[] Players { get; set; }
-        public void CreateDefaultPlayers()
-        {
-            Players = (new Player[] { Player.CreateDefaultPlayer(), Player.CreateDefaultPlayer() });
-        }
+
+        /// <summary>
+        /// Options
+        /// </summary>
+        public bool AutomaticWinLose { get; set; }
+        public bool Delays { get; set; }
+
+        /// <summary>
+        /// The players in the game
+        /// </summary>
+        public Player[] Players { get; set; }     
+        
+        /// <summary>
+        /// ID of the player currently set to play. "In turn"
+        /// </summary>
         public int PlayerTurn { get; set; }
+
+        /// <summary>
+        /// Switch the turn from player to another
+        /// </summary>
         public void SwitchPlayerTurn()
         {
             PlayerTurn = (PlayerTurn == 0) ? 1 : 0;
         }
 
+        /// <summary>
+        /// Drawing object
+        /// </summary>
         private Drawing drawing = new Drawing();
+
+        /// <summary>
+        /// How many moves have passed. ( If board is full, and no winner results in a draw )
+        /// </summary>
         private int moveCount { get; set; }
+
+        /// <summary>
+        /// The tiles on gameboard
+        /// </summary>
         public Tile[,] Gameboard { get; set; }
 
+        // empty board for creating a default game, and restoring it to default state ( Every tile to empty )
         GameBoard gb = new GameBoard();
 
         public void CreateDefaultGame()
         {
+            // add a empty board
             Gameboard = gb.ReturnBoard();
+
+            // Game is not over
             Over = false;
+
+            // default options
+            Delays = true;
+            AutomaticWinLose = false;
+
+            // 0 moves played so far
+            moveCount = 0;
+
+            // create empty players
             CreateDefaultPlayers();
             PlayerTurn = 0;
+
+            // assign tile values for both players
             Players[0].PlayerTile = Tile.TileValue.X;
             Players[1].PlayerTile = Tile.TileValue.O;
-        }      
+        }
+
+        /// <summary>
+        /// Creates an array of 2 empty players
+        /// </summary>
+        public void CreateDefaultPlayers()
+        {
+            Players = (new Player[] { Player.CreateDefaultPlayer(), Player.CreateDefaultPlayer() });
+        }
+        /// <summary>
+        /// Set the tile value at [X, Y] to given value
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="value"></param>
         public void SetBoardState(int x, int y, Tile.TileValue value)
         {
             bool Winner = false;
             int n = Gameboard.GetLength(0);
             moveCount++;
 
-            //Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[x, y].ID, Gameboard);
-
+            // check if empty, add value if yes
             if (Gameboard[x, y].Value == Tile.TileValue.NaN)
             {
                 Gameboard[x, y].Value = value;
             }
-            //Game Win-conditions
 
+
+            //Game Win-conditions ->
 
             //check column
             for (int i = 0; i < n; i++)
             {
                 if (Gameboard[x, i].Value != value)
                     break;
+
+                // if hasn't triggered break so far, means all horizontal tiles have been of same value so far...
                 if (i == n - 1)
                 {
+                    // -> Means we have a WINNER !
                     Winner = true;
+
+                    // Add all current panels to a list
                     List<System.Windows.Forms.Panel> WinningPanels = new List<System.Windows.Forms.Panel>();
                     for (int p = 0; p < n; p++)
                     {
                         WinningPanels.Add(Gameboard[x, p].Panel);
                     }
-                    drawing.DrawWinnerLineHorizontal(WinningPanels.ToArray());
+
+                    // send the list as array and draw a line showing what line won
+                    drawing.DrawHorizontalLine(WinningPanels.ToArray());
                 }
             }
+
             //check row
             for (int i = 0; i < n; i++)
             {
@@ -110,7 +155,7 @@ namespace Engine
                     {
                         WinningPanels.Add(Gameboard[p, y].Panel);
                     }
-                    drawing.DrawWinnerLineVertical(WinningPanels.ToArray());
+                    drawing.DrawVerticalLine(WinningPanels.ToArray());
                 }
             }
 
@@ -129,53 +174,66 @@ namespace Engine
                         {
                             WinningPanels.Add(Gameboard[p, p].Panel);
                         }
-                        drawing.DrawWinnerLineDiagonal(WinningPanels.ToArray());
+                        drawing.DrawDiagonalLine(WinningPanels.ToArray());
                     }
                 }
             }
 
-            //check diagonal (the other way)
+            // check antidiagonal (the other way than regular diagonal)
             if (x + y == n - 1)
             {
                 for (int i = 0; i < n; i++)
                 {
+                    // Thanks to a helper in stackoverflow for the -> [i, (n - 1) - i]
                     if (Gameboard[i, (n - 1) - i].Value != value)
                         break;
                     if (i == n - 1)
                     {
                         Winner = true;
-                        // drawing.DrawWinnerLineAntiDiagonal(Gameboard[0, 2].Panel, Gameboard[1, 1].Panel, Gameboard[2, 0].Panel);
                         List<System.Windows.Forms.Panel> WinningPanels = new List<System.Windows.Forms.Panel>();
                         for (int p = 0; p < n; p++)
                         {
                             WinningPanels.Add(Gameboard[p, (n - 1)-p].Panel);
                         }
-                        drawing.DrawWinnerLineAntiDiagonal(WinningPanels.ToArray());
+                        drawing.DrawAntiDiagonalLine(WinningPanels.ToArray());
                     }
                 }
             }
 
 
-            //check draw
+            //check draw, if movecount is same as for eg. 3^2 = 9, and winner is not true
             if (moveCount == (Math.Pow(n, 2)) && Winner != true)
             {
-                AddWinner("Draw");
-                Players[0].SaveGame("DRAW", Gameboard);
+                this.Winner="Draw";
+                SaveGame("DRAW", Gameboard);
                 Over = true;
             }
+
+            // check if winner is true
             if (Winner == true)
             {
                 Over = true;
 
+                // check which one won x / o
                 if (value == Tile.TileValue.X)
-                    Players[0].SaveGame("X", Gameboard);
+                    SaveGame("X", Gameboard);
                 else
-                    Players[0].SaveGame("O", Gameboard);
+                    SaveGame("O", Gameboard);
 
-                AddWinner(Players.FirstOrDefault(X => X.PlayerTile == value).PlayerTile.ToString());
-                RaiseMessage("Player " + this.Winner + " wins");
+                // set the winner as the winning tile value
+                this.Winner = Players.FirstOrDefault(X => X.PlayerTile == value).PlayerTile.ToString();
+
+                // add 5 experience for the winner, remove 5 from loser
+                Players.FirstOrDefault(X => X.PlayerTile == value).AddExperiencePoints(5);
+                Players.FirstOrDefault(X => X.PlayerTile != value).AddExperiencePoints(-5);
+
+
             }
         }
+        /// <summary>
+        /// Resets the game.
+        /// <para> empties the board, and puts values to 0 </para>
+        /// </summary>
         public void ResetGame()
         {
             Gameboard = gb.ReturnBoard();
@@ -188,13 +246,23 @@ namespace Engine
             }
             Over = false;
         }
+
+        /// <summary>
+        /// Smart function that returns true
+        /// <para> if a winning move is present on the current layout </para>
+        /// <para> if a losing move is present on the current layout </para>
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private bool CheckWinningMove(int x, int y, Tile.TileValue value)
         {
+            // same code as in the setboardstate function, apart from removed saves
             bool Winner = false;
             int n = 3;
 
             Tile[,] board = Gameboard;
-            //check column
 
             if (board[x, y].Value == Tile.TileValue.NaN)
             {
@@ -210,7 +278,7 @@ namespace Engine
                     Winner = true;
                 }
             }
-            //check row
+
             for (int i = 0; i < n; i++)
             {
                 if (board[i, y].Value != value)
@@ -221,7 +289,6 @@ namespace Engine
                 }
             }
 
-            //check diagonal
             if (x == y)
             {
                 for (int i = 0; i < n; i++)
@@ -235,7 +302,6 @@ namespace Engine
                 }
             }
 
-            //check diagonal (the other way)
             if (x + y == n - 1)
             {
                 for (int i = 0; i < n; i++)
@@ -248,13 +314,21 @@ namespace Engine
                     }
                 }
             }
-            //revert changes
+
+            //IMPORTANT!!!! revert changes
+            //Because when dealing with a 2D array, the copy is only a "shallow" copy, so whenever you modify the contents of copy
+            //it also modifies the contents of original array
             board[x, y].Value = Tile.TileValue.NaN;
             return Winner;
         }
+        /// <summary>
+        /// Performs a random move, from a list of legal moves
+        /// </summary>
         public void RANDOM_MOVE()
         {
             Random r = new Random();
+
+            // list of possible legal moves
             List<Tile> legalMoves = new List<Tile>();
             foreach (Tile tile in Gameboard)
             {
@@ -264,16 +338,17 @@ namespace Engine
                 }
 
             }
+            // select a random move from legals
             Tile randomTile = legalMoves[r.Next(0, legalMoves.Count - 1)];
-
-            int x = (randomTile.Panel.Location.X - 50) / 50;
-            int y = (randomTile.Panel.Location.Y - 50) / 50;
-            Tile t = Gameboard[x, y];
-            if (t.CheckTileState())
+            if (randomTile.CheckTileState())
             {
-                MakeMove(x, y, Players[PlayerTurn].PlayerTile);
+                MakeMove(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
             }
         }
+
+        /// <summary>
+        /// Checks if a winning / losing move is possible, and executes / prevents it
+        /// </summary>
         public void PredictMove()
         {
             List<Tile> legalMoves = new List<Tile>();
@@ -299,14 +374,12 @@ namespace Engine
                 {
                     MoveX = legalMoves[i].X;
                     MoveY = legalMoves[i].Y;
-                    //MessageBox.Show("Winning Tile" + " for " + Players[PlayerTurn].PlayerTile +" is: " + legalMoves[i].X.ToString() + "," + legalMoves[i].Y.ToString());
                     break;
                 }
                 if (opponentwinningmove)
                 {
                     MoveX = legalMoves[i].X;
                     MoveY = legalMoves[i].Y;
-                    //MessageBox.Show("Winning Tile" + " for " + Players[PlayerTurn].PlayerTile +" is: " + legalMoves[i].X.ToString() + "," + legalMoves[i].Y.ToString());
                     break;
                 }
             }
@@ -314,7 +387,8 @@ namespace Engine
             {
                 if (Gameboard[MoveX, MoveY].CheckTileState())
                 {
-                    Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard);
+                    // save function for machine learning
+                    // SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard); 
                     MakeMove(MoveX, MoveY, Players[PlayerTurn].PlayerTile);
                 }
             }
@@ -322,16 +396,25 @@ namespace Engine
             {
                 if (Gameboard[MoveX, MoveY].CheckTileState())
                 {
-                    Players[0].SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard);
+                    // save function for machine learning
+                    // SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard);
                     MakeMove(MoveX, MoveY, Players[PlayerTurn].PlayerTile);
                 }
             }
 
         }
+        /// <summary>
+        /// Makes the move and draws a shape, depending which player made the move
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="value"></param>
         public void MakeMove(int X, int Y, Tile.TileValue value)
         {
+            // if the game hasnt been won yet...
             if(Winner == null)
             {
+                // who is in turn
                 if (PlayerTurn == 0)
                 {
                     drawing.DrawCross(Gameboard[X, Y].Panel);
@@ -341,10 +424,241 @@ namespace Engine
                     drawing.DrawCircle(Gameboard[X, Y].Panel);
                 }
 
+                // set the state of board
                 SetBoardState(X, Y, value);
+
+                // switch players
                 SwitchPlayerTurn();
                 //PredictMove();           
             }
+        }
+
+        /// <summary>
+        /// Saves the current options to a XML file
+        /// </summary>
+        /// <param name="Delays"></param>
+        /// <param name="AutomaticWinLose"></param>
+        /// <param name="players"></param>
+        public void SaveOptions(bool Delays, bool AutomaticWinLose, Player[] players)
+        {
+            string options = Options(Delays, AutomaticWinLose, players);
+            File.WriteAllText("Options.xml", options);
+        }
+
+        /// <summary>
+        /// Reads the options from a XML file to the current game
+        /// </summary>
+        /// <returns></returns>
+        public static GameLogic LoadOptions()
+        {
+            GameLogic game = new GameLogic();
+            if (File.Exists("Options.xml"))
+                game = CreateGameFromXmlString(File.ReadAllText("Options.xml"));
+            else
+                game.CreateDefaultGame();
+
+            return game;
+        }
+
+        /// <summary>
+        /// sets the games players and options from a XML file
+        /// </summary>
+        /// <param name="xmlGameData"></param>
+        /// <returns></returns>
+        private static GameLogic CreateGameFromXmlString(string xmlGameData)
+        {
+            try
+            {
+                // create a xml document
+                XmlDocument gameData = new XmlDocument();
+                
+                // load the data
+                gameData.LoadXml(xmlGameData);
+
+                // get the values for options
+                bool Delays = Convert.ToBoolean(gameData.SelectSingleNode("/Game/Options/Delays").InnerText);
+                bool AutomaticWinLose = Convert.ToBoolean(gameData.SelectSingleNode("/Game/Options/AutomaticWinLose").InnerText);
+
+                // create a default game object
+                GameLogic game = new GameLogic();
+                game.CreateDefaultGame();
+
+                // then set the options
+                game.Delays = Delays;
+                game.AutomaticWinLose = AutomaticWinLose;
+
+                int i = 0;
+                foreach (XmlNode node in gameData.SelectNodes("/Game/Players/Player"))
+                {
+                    // set the players
+                    game.Players[i].AddExperiencePoints(Convert.ToInt32(node.Attributes["Experience"].Value));
+                    game.Players[i].Name = node.Attributes["Name"].Value;
+                    i++;
+                }
+
+                // return the created game object
+                return game;
+            }
+            catch
+            {
+                GameLogic defaultgame = new GameLogic();
+                defaultgame.CreateDefaultGame();
+
+                // If there was an error with the XML data, return a default game object
+                return defaultgame;
+            }
+        }
+        /// <summary>
+        /// returns a XML document from given game data
+        /// </summary>
+        /// <param name="Delays"></param>
+        /// <param name="AutomaticWinLose"></param>
+        /// <param name="players"></param>
+        /// <returns></returns>
+        public string Options(bool Delays, bool AutomaticWinLose, Player[] players)
+        {
+            XmlDocument GameData = new XmlDocument();
+
+            // Create the top-level XML node
+            XmlNode Game = GameData.CreateElement("Game");
+            GameData.AppendChild(Game);
+
+            // Create the "Stats" child node to hold the statistics nodes
+            XmlNode Options = GameData.CreateElement("Options");
+            Game.AppendChild(Options);
+
+            // Create the child nodes for the "Stats" node
+            CreateNewChildXmlNode(GameData, Options, "Delays", Delays);
+            CreateNewChildXmlNode(GameData, Options, "AutomaticWinLose", AutomaticWinLose);
+
+            // Create the "GameBoard" child node to hold each Tile node
+            XmlNode Players = GameData.CreateElement("Players");
+            Game.AppendChild(Players);
+            foreach (Player player in players)
+            {
+                XmlNode Player = GameData.CreateElement("Player");
+
+                AddXmlAttributeToNode(GameData, Player, "Experience", player.ExperiencePoints);
+                AddXmlAttributeToNode(GameData, Player, "Name", player.Name);
+
+                Players.AppendChild(Player);
+            }
+            return GameData.InnerXml;
+        }
+
+        /// <summary>
+        /// returns a CSV file containing the game data ( used for ML )
+        /// </summary>
+        /// <param name="Winner"></param>
+        /// <param name="Gameboard"></param>
+        /// <returns></returns>
+        public string ToCSVString(string Winner, Tile[,] Gameboard)
+        {
+            string MainData = "";
+            string boardData = "";
+            int occupied = 0;
+            for (int y = 0; y < Gameboard.GetLength(0); y++)
+            {
+                for (int x = 0; x < Gameboard.GetLength(1); x++)
+                {
+                    Tile tile = Gameboard[x, y];
+                    boardData += "," + tile.Value;
+                    if (tile.Value != Tile.TileValue.NaN)
+                        occupied++;
+                }
+            }
+            MainData += Winner + boardData + "," + occupied + Environment.NewLine;
+            return MainData;
+        }
+
+        /// <summary>
+        /// returns a CSV file containing the data of executed moves ( used for ML )
+        /// </summary>
+        /// <param name="TilePlayed"></param>
+        /// <param name="TileID"></param>
+        /// <param name="Gameboard"></param>
+        /// <returns></returns>
+        public string MoveToCSVString(string TilePlayed, int TileID, Tile[,] Gameboard)
+        {
+            string MainData = "";
+            string boardData = "";
+            for (int y = 0; y < Gameboard.GetLength(0); y++)
+            {
+                for (int x = 0; x < Gameboard.GetLength(1); x++)
+                {
+                    Tile tile = Gameboard[x, y];
+                    boardData += "," + tile.Value;
+                }
+            }
+            MainData += TilePlayed + "," + TileID + boardData + Environment.NewLine;
+            return MainData;
+        }
+
+        /// <summary>
+        /// Saves the current game at the end of a CSV file (Gamedata) (used for ML)
+        /// </summary>
+        /// <param name="Winner"></param>
+        /// <param name="Gameboard"></param>
+        public void SaveGame(string Winner, Tile[,] Gameboard)
+        {
+            string savedata = ToCSVString(Winner, Gameboard);
+
+            if (!File.Exists("GameData.csv"))
+            {
+                string clientHeader = "Winner,tile1,tile2,tile3,tile4,tile5,tile6,tile7,tile8,tile9,OccupiedTiles" + Environment.NewLine;
+
+                File.WriteAllText("GameData.csv", clientHeader);
+            }
+
+            File.AppendAllText("GameData.csv", savedata);
+        }
+
+        /// <summary>
+        /// Saves the move at the end of a CSV file (Moves) (used for ML)
+        /// </summary>
+        /// <param name="Player"></param>
+        /// <param name="TileID"></param>
+        /// <param name="Gameboard"></param>
+        public void SaveMove(string Player, int TileID, Tile[,] Gameboard)
+        {
+            string savedata = MoveToCSVString(Player, TileID, Gameboard);
+
+            if (!File.Exists("MoveData.csv"))
+            {
+                string clientHeader = "TilePlayed,TileID,tile1,tile2,tile3,tile4,tile5,tile6,tile7,tile8,tile9" + Environment.NewLine;
+
+                File.WriteAllText("MoveData.csv", clientHeader);
+            }
+
+            File.AppendAllText("MoveData.csv", savedata);
+        }
+
+        /// <summary>
+        /// Creates a Child XML node
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="parentNode"></param>
+        /// <param name="elementName"></param>
+        /// <param name="value"></param>
+        private void CreateNewChildXmlNode(XmlDocument document, XmlNode parentNode, string elementName, object value)
+        {
+            XmlNode node = document.CreateElement(elementName);
+            node.AppendChild(document.CreateTextNode(value.ToString()));
+            parentNode.AppendChild(node);
+        }
+
+        /// <summary>
+        /// Adds a attribute to a XML node
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="node"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="value"></param>
+        private void AddXmlAttributeToNode(XmlDocument document, XmlNode node, string attributeName, object value)
+        {
+            XmlAttribute attribute = document.CreateAttribute(attributeName);
+            attribute.Value = value.ToString();
+            node.Attributes.Append(attribute);
         }
     }
 }

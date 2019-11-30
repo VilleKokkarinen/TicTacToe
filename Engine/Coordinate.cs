@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
+    /// <summary>
+    /// Pretty self explanatory ?
+    /// </summary>
     public class Coordinate
     {
         public int X { get; set; }

@@ -46,7 +46,7 @@
             this.btnRandomMove.Text = "Random Move";
             this.toolTip.SetToolTip(this.btnRandomMove, "CPU makes a random move for current player");
             this.btnRandomMove.UseVisualStyleBackColor = true;
-            this.btnRandomMove.Click += new System.EventHandler(this.btnAIMove_Click);
+            this.btnRandomMove.Click += new System.EventHandler(this.btnRandom_Move_Click);
             // 
             // btnMachineLearningMove
             // 
@@ -59,7 +59,7 @@
             this.toolTip.SetToolTip(this.btnMachineLearningMove, "Uses a premade Machine-Learning model to determine a \"good\" move for current play" +
         "er");
             this.btnMachineLearningMove.UseVisualStyleBackColor = true;
-            this.btnMachineLearningMove.Click += new System.EventHandler(this.button1_Click);
+            this.btnMachineLearningMove.Click += new System.EventHandler(this.btn_MachineLearningMove_Click);
             // 
             // lblWinner
             // 

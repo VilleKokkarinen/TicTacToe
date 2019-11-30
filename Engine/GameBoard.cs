@@ -6,30 +6,47 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
+    /// <summary>
+    /// The 2D array of Tiles / or the gameboard
+    /// </summary>
     public class GameBoard
     {
         private Tile[,] Board;
 
+        /// <summary>
+        /// Create new gameboard of N size
+        /// </summary>
+        /// <param name="Size"></param>
         public GameBoard(int Size = 3)
         {
             Board = new Tile[Size, Size];
-            MakeBoardOfSize(Size);
+            AddTilesToBoard(Size);
         }
 
-        private void MakeBoardOfSize(int Size = 3)
+        /// <summary>
+        /// Adds the tiles to the gameboard
+        /// </summary>
+        /// <param name="Size"></param>
+        private void AddTilesToBoard(int Size = 3)
         {
+           // Each tile gets a ID
            int ID = 0;
 
            for(int X = 0; X < Size; X++)
            {
                 for(int Y = 0; Y < Size; Y++)
                 {
-                    Board[X, Y] = new Tile(ID, 0, 0, Tile.TileValue.NaN, new System.Windows.Forms.Panel());
+                    // Add a new empty tile to the board
+                    Board[X, Y] = new Tile(ID, X, Y, Tile.TileValue.NaN, new System.Windows.Forms.Panel());
                     ID++;
                 }
            }
         }
 
+        /// <summary>
+        /// Returns the current board
+        /// </summary>
+        /// <returns></returns>
         public Tile[,] ReturnBoard()
         {
             return Board;
