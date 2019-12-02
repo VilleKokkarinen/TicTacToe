@@ -131,7 +131,7 @@ namespace TicTacToe
             // Margin from top-left corner
             Point newLoc = new Point(50, 50);
 
-            // Offset for the longer black lines ( ~ X- Margin )
+            // Offset for the longer black lines ( ~ X- Margin ) separator lines
             int offset = 100;
 
             // separator lines
@@ -266,7 +266,17 @@ namespace TicTacToe
 
         private void btnHiScores_Click(object sender, EventArgs e)
         {
+            HighScores h = new HighScores();
+            h.ShowDialog();
+        }
 
+        private void GameForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveData();
+        }
+        void SaveData()
+        {
+            Game.SaveOptions(Game.Delays, Game.AutomaticWinLose, Game.Players);
         }
     }
 }

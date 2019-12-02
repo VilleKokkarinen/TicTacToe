@@ -119,6 +119,7 @@
             this.Controls.Add(this.txtPlayerNameO);
             this.Controls.Add(this.txtPlayerNameX);
             this.Name = "Options";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Options_FormClosing);
             this.ResumeLayout(false);

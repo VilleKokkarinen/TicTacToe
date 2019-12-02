@@ -105,7 +105,9 @@
             this.Controls.Add(this.btnMachineLearningMove);
             this.Controls.Add(this.btnRandomMove);
             this.Name = "GameForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "A Game of Tic Tac Toe";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
