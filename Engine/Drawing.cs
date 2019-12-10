@@ -19,6 +19,7 @@ namespace Engine
         /// <param name="panel"></param>
         public void DrawCircle(Panel panel)
         {
+            panel.Refresh();
             int x, y, width, height;
             // marginin verran vasemmasta ylänurkasta
             x = _Margin;
@@ -39,6 +40,7 @@ namespace Engine
         /// <param name="panel"></param>
         public void DrawCross(Panel panel)
         {
+            panel.Refresh();
             Graphics g = panel.CreateGraphics();
             Pen _pen = new Pen(Color.Black, _LineWidth);
             // viiva \

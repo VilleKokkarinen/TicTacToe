@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacToeML.Model", "TicTacToeML.Model\TicTacToeML.Model.csproj", "{D8201F8F-5974-421A-AB81-2CC11B6C535A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacToeML.ConsoleApp", "TicTacToeML.ConsoleApp\TicTacToeML.ConsoleApp.csproj", "{3277908D-19F0-4739-A988-67973E3BFE3A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,18 +55,6 @@ Global
 		{D8201F8F-5974-421A-AB81-2CC11B6C535A}.Release|x64.Build.0 = Release|Any CPU
 		{D8201F8F-5974-421A-AB81-2CC11B6C535A}.Release|x86.ActiveCfg = Release|Any CPU
 		{D8201F8F-5974-421A-AB81-2CC11B6C535A}.Release|x86.Build.0 = Release|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Debug|x64.Build.0 = Debug|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Debug|x86.Build.0 = Debug|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Release|x64.ActiveCfg = Release|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Release|x64.Build.0 = Release|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Release|x86.ActiveCfg = Release|Any CPU
-		{3277908D-19F0-4739-A988-67973E3BFE3A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

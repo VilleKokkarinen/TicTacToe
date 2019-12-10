@@ -11,7 +11,7 @@ namespace TicTacToeML.ConsoleApp
     class Program
     {
         //Dataset to use for predictions 
-        private const string DATA_FILEPATH = @"C:\Users\ville\Source\Repos\VilleKokkarinen\TicTacToe\TicTacToe\bin\x64\Debug\Test.csv";
+        private const string DATA_FILEPATH = @"C:\Users\ville\source\repos\TicTacToe\TicTacToe\bin\x64\Debug\MoveData.csv";
 
         static void Main(string[] args)
         {

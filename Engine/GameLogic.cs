@@ -7,7 +7,7 @@ using System.Xml;
 namespace Engine
 {
     /// <summary>
-    /// Class containing the full Logical operations of a game
+    /// Class containing the full Logical operations of a Tic Tac Toe Game
     /// </summary>
     public class GameLogic
     {
@@ -55,7 +55,7 @@ namespace Engine
         private int moveCount { get; set; }
         
         // empty board for creating a default game, and restoring it to default state ( Every tile to empty )
-        GameBoard Gameboard;
+        public GameBoard Gameboard;
         #endregion
 
         #region Player functions
@@ -104,6 +104,10 @@ namespace Engine
             Players[1].PlayerTile = Tile.TileValue.O;
         }
 
+        public void NewBoard()
+        {
+            Gameboard = new GameBoard(BoardSize);
+        }
         /// <summary>
         /// Resets the game.
         /// <para> empties the board, and puts values to 0 </para>
@@ -112,13 +116,18 @@ namespace Engine
         {
             moveCount = 0;
             Winner = null;
-
+            
             // reset the tiles
             foreach (Tile tile in Gameboard.getboard())
             {
                 tile.Value = Tile.TileValue.NaN;
+                //tile.Panel.Dispose();
             }
+            
             Over = false;
+            // add a empty board
+            // Gameboard = new GameBoard(BoardSize);
+
         }
         #endregion
 
@@ -373,7 +382,7 @@ namespace Engine
                 if (Gameboard.getboard()[MoveX, MoveY].CheckTileState())
                 {
                     // save function for machine learning
-                    // SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard); 
+                    SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard.getboard()[MoveX, MoveY].ID, Gameboard.getboard()); 
                     MakeMove(MoveX, MoveY, Players[PlayerTurn].PlayerTile);
                 }
             }
@@ -382,7 +391,7 @@ namespace Engine
                 if (Gameboard.getboard()[MoveX, MoveY].CheckTileState())
                 {
                     // save function for machine learning
-                    // SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard);
+                    SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard.getboard()[MoveX, MoveY].ID, Gameboard.getboard());
                     MakeMove(MoveX, MoveY, Players[PlayerTurn].PlayerTile);
                 }
             }
@@ -508,9 +517,9 @@ namespace Engine
         /// <param name="Delays"></param>
         /// <param name="AutomaticWinLose"></param>
         /// <param name="players"></param>
-        public void SaveOptions(bool Delays, bool AutomaticWinLose, Player[] players)
+        public void SaveOptions(bool Delays, bool AutomaticWinLose, int BoardSize, Player[] players)
         {
-            string options = Options(Delays, AutomaticWinLose, players);
+            string options = Options(Delays, AutomaticWinLose, BoardSize, players);
             File.WriteAllText("Options.xml", options);
         }
 
@@ -547,14 +556,17 @@ namespace Engine
                 // get the values for options
                 bool Delays = Convert.ToBoolean(gameData.SelectSingleNode("/Game/Options/Delays").InnerText);
                 bool AutomaticWinLose = Convert.ToBoolean(gameData.SelectSingleNode("/Game/Options/AutomaticWinLose").InnerText);
+                int BoardSize = Convert.ToInt32(gameData.SelectSingleNode("/Game/Options/BoardSize").InnerText);
 
                 // create a default game object
                 GameLogic game = new GameLogic();
+                game.BoardSize = BoardSize;
                 game.CreateDefaultGame();
 
                 // then set the options
                 game.Delays = Delays;
                 game.AutomaticWinLose = AutomaticWinLose;
+             
 
                 int i = 0;
                 foreach (XmlNode node in gameData.SelectNodes("/Game/Players/Player"))
@@ -562,6 +574,7 @@ namespace Engine
                     // set the players
                     game.Players[i].AddExperiencePoints(Convert.ToInt32(node.Attributes["Experience"].Value));
                     game.Players[i].Name = node.Attributes["Name"].Value;
+                    game.Players[i].IsCPU = Convert.ToBoolean(node.Attributes["IsCPU"].Value);
                     i++;
                 }
 
@@ -584,7 +597,7 @@ namespace Engine
         /// <param name="AutomaticWinLose"></param>
         /// <param name="players"></param>
         /// <returns></returns>
-        public string Options(bool Delays, bool AutomaticWinLose, Player[] players)
+        public string Options(bool Delays, bool AutomaticWinLose, int BoardSize, Player[] players)
         {
             XmlDocument GameData = new XmlDocument();
 
@@ -599,6 +612,7 @@ namespace Engine
             // Create the child nodes for the "Stats" node
             CreateNewChildXmlNode(GameData, Options, "Delays", Delays);
             CreateNewChildXmlNode(GameData, Options, "AutomaticWinLose", AutomaticWinLose);
+            CreateNewChildXmlNode(GameData, Options, "BoardSize", BoardSize);
 
             // Create the "GameBoard" child node to hold each Tile node
             XmlNode Players = GameData.CreateElement("Players");
@@ -609,7 +623,7 @@ namespace Engine
 
                 AddXmlAttributeToNode(GameData, Player, "Experience", player.ExperiencePoints);
                 AddXmlAttributeToNode(GameData, Player, "Name", player.Name);
-
+                AddXmlAttributeToNode(GameData, Player, "IsCPU", player.IsCPU);
                 Players.AppendChild(Player);
             }
             return GameData.InnerXml;

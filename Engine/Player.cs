@@ -13,6 +13,11 @@ namespace Engine
     /// </summary>
     public class Player
     {
+        // Used for highscores form
+        public int wins { get; set; }
+        public int losses { get; set; }
+        public bool IsCPU { get; set; } = false;
+
         // Current amount of experience
         private int _experiencePoints;
         
@@ -30,7 +35,7 @@ namespace Engine
                     _experiencePoints = 0;
             }
         }
-
+        
         // Level of player
         public int Level
         {

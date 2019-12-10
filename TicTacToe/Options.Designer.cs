@@ -37,6 +37,11 @@
             this.chkThinkTime = new System.Windows.Forms.CheckBox();
             this.chkAutomaticWinLoss = new System.Windows.Forms.CheckBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.sliderBoardSize = new System.Windows.Forms.TrackBar();
+            this.lblSliderValue = new System.Windows.Forms.Label();
+            this.checkCPUX = new System.Windows.Forms.CheckBox();
+            this.checkCPUO = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.sliderBoardSize)).BeginInit();
             this.SuspendLayout();
             // 
             // txtPlayerNameX
@@ -73,7 +78,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 101);
+            this.button1.Location = new System.Drawing.Point(12, 131);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(92, 38);
             this.button1.TabIndex = 3;
@@ -106,11 +111,65 @@
         "on a singe line");
             this.chkAutomaticWinLoss.UseVisualStyleBackColor = true;
             // 
+            // sliderBoardSize
+            // 
+            this.sliderBoardSize.LargeChange = 1;
+            this.sliderBoardSize.Location = new System.Drawing.Point(16, 309);
+            this.sliderBoardSize.Maximum = 6;
+            this.sliderBoardSize.Minimum = 2;
+            this.sliderBoardSize.Name = "sliderBoardSize";
+            this.sliderBoardSize.Size = new System.Drawing.Size(147, 45);
+            this.sliderBoardSize.TabIndex = 6;
+            this.toolTip.SetToolTip(this.sliderBoardSize, "Select size of board");
+            this.sliderBoardSize.Value = 3;
+            this.sliderBoardSize.ValueChanged += new System.EventHandler(this.sliderBoardSize_ValueChanged);
+            // 
+            // lblSliderValue
+            // 
+            this.lblSliderValue.AutoSize = true;
+            this.lblSliderValue.BackColor = System.Drawing.Color.Transparent;
+            this.lblSliderValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSliderValue.ForeColor = System.Drawing.Color.Black;
+            this.lblSliderValue.Location = new System.Drawing.Point(54, 294);
+            this.lblSliderValue.Margin = new System.Windows.Forms.Padding(0);
+            this.lblSliderValue.Name = "lblSliderValue";
+            this.lblSliderValue.Size = new System.Drawing.Size(73, 13);
+            this.lblSliderValue.TabIndex = 7;
+            this.lblSliderValue.Text = "3 - Board-Size";
+            // 
+            // checkCPUX
+            // 
+            this.checkCPUX.AutoSize = true;
+            this.checkCPUX.Location = new System.Drawing.Point(12, 77);
+            this.checkCPUX.Name = "checkCPUX";
+            this.checkCPUX.Size = new System.Drawing.Size(57, 17);
+            this.checkCPUX.TabIndex = 8;
+            this.checkCPUX.Text = "CPU ?";
+            this.toolTip.SetToolTip(this.checkCPUX, "Enables automatic win condition, when there are 2 of same Tile on the gameboard, " +
+        "on a singe line");
+            this.checkCPUX.UseVisualStyleBackColor = true;
+            // 
+            // checkCPUO
+            // 
+            this.checkCPUO.AutoSize = true;
+            this.checkCPUO.Location = new System.Drawing.Point(248, 76);
+            this.checkCPUO.Name = "checkCPUO";
+            this.checkCPUO.Size = new System.Drawing.Size(57, 17);
+            this.checkCPUO.TabIndex = 9;
+            this.checkCPUO.Text = "CPU ?";
+            this.toolTip.SetToolTip(this.checkCPUO, "Enables automatic win condition, when there are 2 of same Tile on the gameboard, " +
+        "on a singe line");
+            this.checkCPUO.UseVisualStyleBackColor = true;
+            // 
             // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(367, 366);
+            this.Controls.Add(this.checkCPUO);
+            this.Controls.Add(this.checkCPUX);
+            this.Controls.Add(this.lblSliderValue);
+            this.Controls.Add(this.sliderBoardSize);
             this.Controls.Add(this.chkAutomaticWinLoss);
             this.Controls.Add(this.chkThinkTime);
             this.Controls.Add(this.button1);
@@ -122,6 +181,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Options_FormClosing);
+            ((System.ComponentModel.ISupportInitialize)(this.sliderBoardSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -137,5 +197,9 @@
         private System.Windows.Forms.CheckBox chkThinkTime;
         private System.Windows.Forms.CheckBox chkAutomaticWinLoss;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.TrackBar sliderBoardSize;
+        private System.Windows.Forms.Label lblSliderValue;
+        private System.Windows.Forms.CheckBox checkCPUX;
+        private System.Windows.Forms.CheckBox checkCPUO;
     }
 }

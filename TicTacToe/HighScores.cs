@@ -13,30 +13,41 @@ using Newtonsoft.Json;
 
 namespace TicTacToe
 {
-    class player
-    {
-        public string name;
-        public int wins;
-        public int losses;
-    }
+    /// <summary>
+    /// HighScores form
+    /// </summary>
     public partial class HighScores : Form
     {
+        // List for all games results saved in a file
         List<SaveGame> AllGames = new List<SaveGame>();
-        List<player> Players = new List<player>();
-        List<player> TopTen = new List<player>();
+
+        // List for current players found in all the saved games
+        List<Player> Players = new List<Player>();
+
+        // List for the best players from current players
+        List<Player> TopTen = new List<Player>();
+
+        /// <summary>
+        /// Initializer
+        /// </summary>
         public HighScores()
         {
             InitializeComponent();
 
+            // If saved file exist
             if (File.Exists("Games.json"))
             {
+                // start reading data
                 using (StreamReader r = new StreamReader("Games.json"))
                 {
+                    // convert from json to a list
                     string json = r.ReadToEnd();
                     AllGames = JsonConvert.DeserializeObject<List<SaveGame>>(json);
 
+                    // get all the players from games
                     SetWinsAndLossesForPlayers();
-                    //list.Sort((x, y) => y.CompareTo(x));
+
+                    // sort the best players to top
                     Players.Sort((x, y) => (y.wins - y.losses).CompareTo(x.wins - x.losses));
                     for (int i = 0; i <= 10 && i < Players.Count; i++)
                     {
@@ -44,28 +55,52 @@ namespace TicTacToe
                     }
                 }
             }
+
+            // add the list as a datasource
+            dgTopTen.DataSource = TopTen;
+
+            // hide unnecessary data
+            dgTopTen.Columns["PlayerTile"].Visible = false;
+            dgTopTen.Columns["IsCPU"].Visible = false;
         }
+
+        /// <summary>
+        /// Adds players, and their experience points from all games
+        /// </summary>
         public void SetWinsAndLossesForPlayers()
         {
+            // for all games
             foreach(SaveGame game in AllGames)
             {
-                if (!Players.Any(x => x.name == game.Winner))
+                // if the player is not already in players list
+                if (!Players.Any(x => x.Name == game.Winner))
                 {
-                    Players.Add(new player() { name = game.Winner });
+                    // create a new player and add to list
+                    Player p;
+                    p = Player.CreateDefaultPlayer();
+                    p.Name = game.Winner;
+                    Players.Add(p);
                 }
-                if (!Players.Any(x => x.name == game.Loser))
+                if (!Players.Any(x => x.Name == game.Loser))
                 {
-                    Players.Add(new player() { name = game.Loser });
+                    Player p;
+                    p = Player.CreateDefaultPlayer();
+                    p.Name = game.Loser;
+                    Players.Add(p);
                 }
-                if(Players.Any(x => x.name == game.Winner))
+                // if player is in Players list, give him 5 experience for the won game
+                if(Players.Any(x => x.Name == game.Winner))
                 {
-                    player p = Players.First(x => x.name == game.Winner);
+                    Player p = Players.First(x => x.Name == game.Winner);
                     p.wins += 1;
+                    p.AddExperiencePoints(5);
                 }
-                if (Players.Any(x => x.name == game.Loser))
+                // if player is in Players list, take 5 experience away for the lost game
+                if (Players.Any(x => x.Name == game.Loser))
                 {
-                    player p = Players.First(x => x.name == game.Loser);
+                    Player p = Players.First(x => x.Name == game.Loser);
                     p.losses += 1;
+                    p.AddExperiencePoints(-5);
                 }
             }
         }
