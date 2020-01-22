@@ -47,9 +47,24 @@ namespace Engine
         /// Returns the current board
         /// </summary>
         /// <returns></returns>
-        public Tile[,] ReturnBoard()
+        public Tile[,] getboard()
         {
             return Board;
+        }
+
+        /// <summary>
+        /// Set the tile value at [X, Y] to given value
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="value"></param>
+        public void SetBoardState(int x, int y, Tile.TileValue value)
+        {
+            // check if empty, add value if empty
+            if (Board[x, y].Value == Tile.TileValue.NaN)
+            {
+                Board[x, y].Value = value;
+            }
         }
     }
 }

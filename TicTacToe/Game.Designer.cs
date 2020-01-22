@@ -35,13 +35,15 @@
             this.btnOptions = new System.Windows.Forms.Button();
             this.btnHiScores = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.progbarCPU = new System.Windows.Forms.ProgressBar();
+            this.lblCPUthink = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnRandomMove
             // 
-            this.btnRandomMove.Location = new System.Drawing.Point(50, 300);
+            this.btnRandomMove.Location = new System.Drawing.Point(249, 49);
             this.btnRandomMove.Name = "btnRandomMove";
-            this.btnRandomMove.Size = new System.Drawing.Size(100, 50);
+            this.btnRandomMove.Size = new System.Drawing.Size(101, 51);
             this.btnRandomMove.TabIndex = 3;
             this.btnRandomMove.Text = "Random Move";
             this.toolTip.SetToolTip(this.btnRandomMove, "CPU makes a random move for current player");
@@ -50,10 +52,10 @@
             // 
             // btnMachineLearningMove
             // 
-            this.btnMachineLearningMove.Location = new System.Drawing.Point(50, 400);
+            this.btnMachineLearningMove.Location = new System.Drawing.Point(249, 99);
             this.btnMachineLearningMove.Margin = new System.Windows.Forms.Padding(2);
             this.btnMachineLearningMove.Name = "btnMachineLearningMove";
-            this.btnMachineLearningMove.Size = new System.Drawing.Size(100, 50);
+            this.btnMachineLearningMove.Size = new System.Drawing.Size(101, 51);
             this.btnMachineLearningMove.TabIndex = 4;
             this.btnMachineLearningMove.Text = "MachineLearning Powered Move";
             this.toolTip.SetToolTip(this.btnMachineLearningMove, "Uses a premade Machine-Learning model to determine a \"good\" move for current play" +
@@ -75,9 +77,9 @@
             // 
             // btnOptions
             // 
-            this.btnOptions.Location = new System.Drawing.Point(350, 300);
+            this.btnOptions.Location = new System.Drawing.Point(249, 199);
             this.btnOptions.Name = "btnOptions";
-            this.btnOptions.Size = new System.Drawing.Size(100, 50);
+            this.btnOptions.Size = new System.Drawing.Size(101, 51);
             this.btnOptions.TabIndex = 6;
             this.btnOptions.Text = "Options";
             this.btnOptions.UseVisualStyleBackColor = true;
@@ -85,27 +87,49 @@
             // 
             // btnHiScores
             // 
-            this.btnHiScores.Location = new System.Drawing.Point(350, 400);
+            this.btnHiScores.Location = new System.Drawing.Point(249, 249);
             this.btnHiScores.Name = "btnHiScores";
-            this.btnHiScores.Size = new System.Drawing.Size(100, 50);
+            this.btnHiScores.Size = new System.Drawing.Size(101, 51);
             this.btnHiScores.TabIndex = 7;
             this.btnHiScores.Text = "HighScores";
             this.btnHiScores.UseVisualStyleBackColor = true;
             this.btnHiScores.Click += new System.EventHandler(this.btnHiScores_Click);
+            // 
+            // progbarCPU
+            // 
+            this.progbarCPU.Location = new System.Drawing.Point(152, 22);
+            this.progbarCPU.Name = "progbarCPU";
+            this.progbarCPU.Size = new System.Drawing.Size(95, 23);
+            this.progbarCPU.TabIndex = 8;
+            this.progbarCPU.Visible = false;
+            // 
+            // lblCPUthink
+            // 
+            this.lblCPUthink.AutoSize = true;
+            this.lblCPUthink.Location = new System.Drawing.Point(150, 6);
+            this.lblCPUthink.Name = "lblCPUthink";
+            this.lblCPUthink.Size = new System.Drawing.Size(69, 13);
+            this.lblCPUthink.TabIndex = 9;
+            this.lblCPUthink.Text = "CPU thinking";
+            this.lblCPUthink.Visible = false;
             // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::TicTacToe.Properties.Resources.Tile;
-            this.ClientSize = new System.Drawing.Size(501, 471);
+            this.ClientSize = new System.Drawing.Size(572, 471);
+            this.Controls.Add(this.lblCPUthink);
+            this.Controls.Add(this.progbarCPU);
             this.Controls.Add(this.btnHiScores);
             this.Controls.Add(this.btnOptions);
             this.Controls.Add(this.lblWinner);
             this.Controls.Add(this.btnMachineLearningMove);
             this.Controls.Add(this.btnRandomMove);
             this.Name = "GameForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "A Game of Tic Tac Toe";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -118,5 +142,7 @@
         private System.Windows.Forms.Button btnOptions;
         private System.Windows.Forms.Button btnHiScores;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.ProgressBar progbarCPU;
+        private System.Windows.Forms.Label lblCPUthink;
     }
 }
