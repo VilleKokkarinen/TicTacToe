@@ -245,9 +245,9 @@ namespace TicTacToe
 
         private void btnRandom_Move_Click(object sender, EventArgs e)
         {
-            // use a random move
-            Game.RANDOM_MOVE();
-            CheckGameOver();
+                Game.PredictMove();
+                Game.RANDOM_MOVE();
+                CheckGameOver();
         }
 
         private void btn_MachineLearningMove_Click(object sender, EventArgs e)

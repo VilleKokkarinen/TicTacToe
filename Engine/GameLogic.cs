@@ -339,11 +339,15 @@ namespace Engine
 
             }
             // select a random move from legals
-            Tile randomTile = legalMoves[r.Next(0, legalMoves.Count - 1)];
-            if (randomTile.CheckTileState())
+            if(legalMoves.Count > 0)
             {
-                MakeMove(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
+                Tile randomTile = legalMoves[r.Next(0, legalMoves.Count - 1)];
+                if (randomTile.CheckTileState())
+                {
+                    MakeMove(randomTile.X, randomTile.Y, Players[PlayerTurn].PlayerTile);
+                }
             }
+         
         }
 
         /// <summary>
@@ -388,8 +392,8 @@ namespace Engine
                 if (Gameboard[MoveX, MoveY].CheckTileState())
                 {
                     // save function for machine learning
-                    // SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard); 
-                    MakeMove(MoveX, MoveY, Players[PlayerTurn].PlayerTile);
+                     SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard); 
+                     MakeMove(MoveX, MoveY, Players[PlayerTurn].PlayerTile);
                 }
             }
             else if (opponentwinningmove)
@@ -397,8 +401,8 @@ namespace Engine
                 if (Gameboard[MoveX, MoveY].CheckTileState())
                 {
                     // save function for machine learning
-                    // SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard);
-                    MakeMove(MoveX, MoveY, Players[PlayerTurn].PlayerTile);
+                     SaveMove(Players[PlayerTurn].PlayerTile.ToString(), Gameboard[MoveX, MoveY].ID, Gameboard);
+                     MakeMove(MoveX, MoveY, Players[PlayerTurn].PlayerTile);
                 }
             }
 
